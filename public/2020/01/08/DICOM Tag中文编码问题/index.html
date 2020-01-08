@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Python,Django," />
+  <meta name="keywords" content="DICOM,Python,pydicom," />
 
 
 
@@ -94,13 +94,13 @@
 
 
 
-<meta name="description" content="本文旨在介绍Django项目实现单设备登录限制的一种方法，基于Django的session机制。">
-<meta name="keywords" content="Python,Django">
+<meta name="description" content="DICOM Tag信息一般都以英文存储，出现中文时，可能会出现显示为乱码的情况，而导致乱码的原因通常是，存储的信息含有中文，而DICOM tag中指定的编码格式SpecificCharacterSet并不支持中文.">
+<meta name="keywords" content="DICOM,Python,pydicom">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Django实现单设备登录限制">
-<meta property="og:url" content="https:&#x2F;&#x2F;ray-sr.github.io&#x2F;2020&#x2F;01&#x2F;05&#x2F;Django%E5%AE%9E%E7%8E%B0%E5%8D%95%E8%AE%BE%E5%A4%87%E7%99%BB%E5%BD%95%E9%99%90%E5%88%B6&#x2F;index.html">
+<meta property="og:title" content="DICOM Tag中文编码问题">
+<meta property="og:url" content="https:&#x2F;&#x2F;ray-sr.github.io&#x2F;2020&#x2F;01&#x2F;08&#x2F;DICOM%20Tag%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98&#x2F;index.html">
 <meta property="og:site_name" content="Ray&#39;s Blog">
-<meta property="og:description" content="本文旨在介绍Django项目实现单设备登录限制的一种方法，基于Django的session机制。">
+<meta property="og:description" content="DICOM Tag信息一般都以英文存储，出现中文时，可能会出现显示为乱码的情况，而导致乱码的原因通常是，存储的信息含有中文，而DICOM tag中指定的编码格式SpecificCharacterSet并不支持中文.">
 <meta property="og:locale" content="en">
 <meta property="og:updated_time" content="2020-01-08T10:23:51.661Z">
 <meta name="twitter:card" content="summary">
@@ -132,13 +132,13 @@
 
 
 
-  <link rel="canonical" href="https://ray-sr.github.io/2020/01/05/Django实现单设备登录限制/"/>
+  <link rel="canonical" href="https://ray-sr.github.io/2020/01/08/DICOM Tag中文编码问题/"/>
 
 
 
 
 
-  <title>Django实现单设备登录限制 | Ray's Blog</title>
+  <title>DICOM Tag中文编码问题 | Ray's Blog</title>
   
 
 
@@ -291,7 +291,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://ray-sr.github.io/2020/01/05/Django%E5%AE%9E%E7%8E%B0%E5%8D%95%E8%AE%BE%E5%A4%87%E7%99%BB%E5%BD%95%E9%99%90%E5%88%B6/">
+    <link itemprop="mainEntityOfPage" href="https://ray-sr.github.io/2020/01/08/DICOM%20Tag%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ray">
@@ -308,7 +308,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Django实现单设备登录限制</h1>
+          <h1 class="post-title" itemprop="name headline">DICOM Tag中文编码问题</h1>
         
 
         <div class="post-meta">
@@ -320,8 +320,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-05T15:38:49+08:00">
-                2020-01-05
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-08T15:38:49+08:00">
+                2020-01-08
               </time>
             
 
@@ -343,8 +343,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Django/" itemprop="url" rel="index">
-                    <span itemprop="name">Django</span>
+                  <a href="/categories/DICOM/" itemprop="url" rel="index">
+                    <span itemprop="name">DICOM</span>
                   </a>
                 </span>
 
@@ -380,16 +380,14 @@
       
 
       
-        <p>本文旨在介绍Django项目实现单设备登录限制的一种方法，基于Django的session机制。</p>
+        <p>DICOM Tag信息一般都以英文存储，出现中文时，可能会出现显示为乱码的情况，而导致乱码的原因通常是，存储的信息含有中文，而DICOM tag中指定的编码格式<code>SpecificCharacterSet</code>并不支持中文.</p>
 <a id="more"></a>
 
-<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>要保证同一账号只能在一台设备登录，基本思路就是维护一个用户登录状态记录，用户每次请求或登录时，先从登录状态记录中查询，如果该账号已经在其他设备登录，则删除或禁止之前的记录。</p>
-<h2 id="使用Mysql数据表"><a href="#使用Mysql数据表" class="headerlink" title="使用Mysql数据表"></a>使用Mysql数据表</h2><p>为保证用户账号安全，限制同一账号只能在唯一一台设备登录，之前的实现思路是建立一个用户登录状态数据表，每次用户登录都根据用户id查询，判断是否有用户id相同的记录，有则删除，同时，在用户请求后端视图时，从session中取出用户id，再查询登录状态记录表，如果该session对应的记录已被删除，则失效该session。<br>实际测试时发现，维护用户登录状态记录表过于繁琐，并且由于用户每次请求都需要查询数据库，对性能也有一定影响，该方案不太可行。</p>
-<h2 id="使用Redis缓存session"><a href="#使用Redis缓存session" class="headerlink" title="使用Redis缓存session"></a>使用Redis缓存session</h2><p>Django项目可以使用Redis作为缓存数据库，Redis是内存数据库，它读写速度快、灵活方便的特点很适合少量数据频繁读写。因此，可以将session保存在Redis中，用户登录时，首先生成session，然后查询是否有用户id相同的记录，如果用户id相同而session_key不同，则说明该账号已经在其他地方登录，此时直接删除之前的session，只保留当前session，因此之前登录的用户就会被挤出。关键代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取当前session的session_key</span></span><br><span class="line">session_key = request.session.session_key</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取Redis中所有key</span></span><br><span class="line">key_list = cache.keys(<span class="string">"*"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 遍历获取到的所有key，通过正则筛选django的session记录</span></span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> key_list:</span><br><span class="line">    s_key = re.match(<span class="string">r'django\.contrib\.sessions\.cache(.*)'</span>, key)</span><br><span class="line">    <span class="comment"># 如果session_key和当前session不同，则进行判断</span></span><br><span class="line">    <span class="keyword">if</span> s_key <span class="keyword">and</span> s_key.group(<span class="number">1</span>) != session_key:</span><br><span class="line">        cache_session_dict = cache.get(key)</span><br><span class="line">        <span class="comment"># 如果session信息中保存的user_id和当前用户id相同，则表明该账号已登录</span></span><br><span class="line">        <span class="keyword">if</span> cache_session_dict.get(<span class="string">'user_id'</span>) == user.id:</span><br><span class="line">            cache.delete(key)</span><br><span class="line">            logger.info(<span class="string">'Account [&#123;&#125;] has logged in elsewhere, delete old session [&#123;&#125;]'</span>.format(username, key))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<h2 id="编码问题"><a href="#编码问题" class="headerlink" title="编码问题"></a>编码问题</h2><p>常见的DICOM tag编码格式一般是<code>ISO_IR 100</code>，存储于<code>SpecificCharacterSet</code>（即0008,0005） tag中，该编码格式并不支持中文，因此DICOM信息中出现中文时，最好将这个tag的值改为<code>ISO_IR 192</code>即UTF-8编码。常见的DICOM tag编码对应关系可参考：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'ISO_IR 100'</span>: <span class="string">'latin_1'</span>,</span><br><span class="line">   <span class="string">'ISO_IR 101'</span>: <span class="string">'iso8859_2'</span>,</span><br><span class="line">   <span class="string">'ISO_IR 109'</span>: <span class="string">'iso8859_3'</span>,</span><br><span class="line">   <span class="string">'ISO_IR 110'</span>: <span class="string">'iso8859_4'</span>,</span><br><span class="line">   <span class="string">'ISO_IR 126'</span>: <span class="string">'iso_ir_126'</span>,  <span class="comment"># Greek</span></span><br><span class="line">   <span class="string">'ISO_IR 127'</span>: <span class="string">'iso_ir_127'</span>,  <span class="comment"># Arabic</span></span><br><span class="line">   <span class="string">'ISO_IR 138'</span>: <span class="string">'iso_ir_138'</span>,  <span class="comment"># Hebrew</span></span><br><span class="line">   <span class="string">'ISO_IR 144'</span>: <span class="string">'iso_ir_144'</span>,  <span class="comment"># Russian</span></span><br><span class="line">   <span class="string">'ISO_IR 148'</span>: <span class="string">'iso_ir_148'</span>,  <span class="comment"># Turkish</span></span><br><span class="line">   <span class="string">'ISO_IR 166'</span>: <span class="string">'iso_ir_166'</span>,  <span class="comment"># Thai</span></span><br><span class="line">   <span class="string">'ISO 2022 IR 6'</span>: <span class="string">'iso8859'</span>,  <span class="comment"># alias for latin_1 too</span></span><br><span class="line">   <span class="string">'ISO 2022 IR 13'</span>: <span class="string">'shift_jis'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 87'</span>: <span class="string">'iso2022_jp'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 100'</span>: <span class="string">'latin_1'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 101'</span>: <span class="string">'iso8859_2'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 109'</span>: <span class="string">'iso8859_3'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 110'</span>: <span class="string">'iso8859_4'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 126'</span>: <span class="string">'iso_ir_126'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 127'</span>: <span class="string">'iso_ir_127'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 138'</span>: <span class="string">'iso_ir_138'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 144'</span>: <span class="string">'iso_ir_144'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 148'</span>: <span class="string">'iso_ir_148'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 149'</span>: <span class="string">'euc_kr'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 159'</span>: <span class="string">'iso2022_jp_2'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 166'</span>: <span class="string">'iso_ir_166'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 IR 58'</span>: <span class="string">'iso_ir_58'</span>,</span><br><span class="line">   <span class="string">'ISO_IR 192'</span>: <span class="string">'UTF8'</span>,  <span class="comment"># from Chinese example, 2008 PS3.5 Annex J p1-4</span></span><br><span class="line">   <span class="string">'GB18030'</span>: <span class="string">'GB18030'</span>,</span><br><span class="line">   <span class="string">'ISO 2022 GBK'</span>: <span class="string">'GBK'</span>,  <span class="comment"># from DICOM correction CP1234</span></span><br><span class="line">   <span class="string">'ISO 2022 58'</span>: <span class="string">'GB2312'</span>,  <span class="comment"># from DICOM correction CP1234</span></span><br><span class="line">   <span class="string">'GBK'</span>: <span class="string">'GBK'</span>,  <span class="comment"># from DICOM correction CP1234</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="视图装饰器"><a href="#视图装饰器" class="headerlink" title="视图装饰器"></a>视图装饰器</h2><p>为了实现登录状态的判断，可以在Django视图上加上装饰器，从而判断每次request对应的session是否被删除，同时进行其他权限校验。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth_required</span><span class="params">(perm)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(view_func)</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">_wrapped_view</span><span class="params">(request, *args, **kwargs)</span>:</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                session_key = request.session.session_key</span><br><span class="line"></span><br><span class="line">                <span class="comment"># session_flag = Session.objects.filter(session_key=session_key)</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> session_key:</span><br><span class="line">                    <span class="keyword">return</span> JsonResponse(&#123;<span class="string">"respCode"</span>: <span class="number">4001</span>&#125;)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    role = request.session.get(<span class="string">"role_id"</span>)</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> role:</span><br><span class="line">                        <span class="keyword">return</span> JsonResponse(&#123;<span class="string">"respCode"</span>: <span class="number">4002</span>&#125;)</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="keyword">if</span> int(role) &gt; int(perm):</span><br><span class="line">                            <span class="keyword">return</span> JsonResponse(&#123;<span class="string">"respCode"</span>: <span class="number">4003</span>&#125;)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                logger.error(e)</span><br><span class="line">                <span class="keyword">return</span> JsonResponse(&#123;<span class="string">"respCode"</span>: <span class="number">4004</span>&#125;)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> view_func(request, *args, **kwargs)</span><br><span class="line">        <span class="keyword">return</span> _wrapped_view</span><br><span class="line">    <span class="keyword">return</span> decorator</span><br></pre></td></tr></table></figure>
+<h2 id="使用SimpleITK读取DICOM-tag"><a href="#使用SimpleITK读取DICOM-tag" class="headerlink" title="使用SimpleITK读取DICOM tag"></a>使用SimpleITK读取DICOM tag</h2><p>DICOM tag中含有中文时，可以利用SimpleITK读取Tag信息并转换为GBK编码，随后可以使用pydicom改变<code>SpecificCharacterSet</code>的值为<code>ISO_IR 192</code>(暂时未找到SimpleITK改变DICOM tag的方法)。以下是读取DICOM tag中<code>PatientName</code>并改变编码的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SimpleITK <span class="keyword">as</span> sitk</span><br><span class="line"></span><br><span class="line">dcm_path = <span class="string">'/path_to_dcm'</span></span><br><span class="line">dcm = sitk.ReadImage(dcm_path)</span><br><span class="line">patient_name = dcm.GetMetaData(<span class="string">'0010|0010'</span>).strip().encode(<span class="string">"utf-8"</span>, <span class="string">"surrogateescape"</span>).decode(<span class="string">'gbk'</span>, <span class="string">'replace'</span>)</span><br><span class="line"></span><br><span class="line">ds = pydicom.dcmread(dcm_path)</span><br><span class="line">ds.SpecificCharacterSet = <span class="string">'ISO_IR 192'</span></span><br><span class="line">ds.PatientName = patient_name</span><br><span class="line">ds.save_as(dcm_path)</span><br></pre></td></tr></table></figure>
 
 
       
@@ -408,9 +406,11 @@
       
         <div class="post-tags">
           
+            <a href="/tags/DICOM/" rel="tag"><i class="fa fa-tag"></i> DICOM</a>
+          
             <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
           
-            <a href="/tags/Django/" rel="tag"><i class="fa fa-tag"></i> Django</a>
+            <a href="/tags/pydicom/" rel="tag"><i class="fa fa-tag"></i> pydicom</a>
           
         </div>
       
@@ -423,8 +423,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/05/Docker%E9%83%A8%E7%BD%B2Nginx%20+%20uWSGI%20+%20Django%E5%AE%9E%E8%B7%B5/" rel="next" title="Docker部署Nginx + uWSGI + Django实践">
-                <i class="fa fa-chevron-left"></i> Docker部署Nginx + uWSGI + Django实践
+              <a href="/2020/01/08/Orthanc%20+%20OHIF%20%E6%90%AD%E5%BB%BADICOM%20web%20viewer/" rel="next" title="Orthanc + OHIF 搭建DICOM web viewer">
+                <i class="fa fa-chevron-left"></i> Orthanc + OHIF 搭建DICOM web viewer
               </a>
             
           </div>
@@ -433,8 +433,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/01/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM/" rel="prev" title="使用SimpleITK读取DICOM">
-                使用SimpleITK读取DICOM <i class="fa fa-chevron-right"></i>
+              <a href="/2020/01/08/Django%E5%AE%9E%E7%8E%B0%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/" rel="prev" title="Django实现语言切换">
+                Django实现语言切换 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -569,7 +569,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本思路"><span class="nav-number">1.</span> <span class="nav-text">基本思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Mysql数据表"><span class="nav-number">2.</span> <span class="nav-text">使用Mysql数据表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Redis缓存session"><span class="nav-number">3.</span> <span class="nav-text">使用Redis缓存session</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视图装饰器"><span class="nav-number">4.</span> <span class="nav-text">视图装饰器</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码问题"><span class="nav-number">1.</span> <span class="nav-text">编码问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用SimpleITK读取DICOM-tag"><span class="nav-number">2.</span> <span class="nav-text">使用SimpleITK读取DICOM tag</span></a></li></ol></div>
             
 
           </div>

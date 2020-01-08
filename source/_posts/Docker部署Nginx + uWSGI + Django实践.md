@@ -1,7 +1,7 @@
 ---
 title: Docker部署Nginx + uWSGI + Django实践
 date: 2019-05-05 19:38:49
-tags: Docker
+tags: [Docker,Django,Nginx]
 categories: Docker
 ---
 

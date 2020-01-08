@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="DICOM,Python,SimpleITK," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="SimpleITK是ITK的简化接口，专门用于处理医学影像，在SimpleITK中，图像的概念与我们在计算机视觉中常用的RGB图像差异很大，后者只是一个多维矩阵，是一个数学上的概念，而在SimpleITK中，图像是一种物理实体，图像中的每一个像素都是物理空间中的一个点，不光有着像素值，还有着坐标，间距，方向等概念。本文将介绍python版SimpleITK读取DICOM并从DICOM study中">
+<meta name="keywords" content="DICOM,Python,SimpleITK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用SimpleITK读取DICOM">
+<meta property="og:url" content="https:&#x2F;&#x2F;ray-sr.github.io&#x2F;2020&#x2F;01&#x2F;08&#x2F;%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM&#x2F;index.html">
+<meta property="og:site_name" content="Ray&#39;s Blog">
+<meta property="og:description" content="SimpleITK是ITK的简化接口，专门用于处理医学影像，在SimpleITK中，图像的概念与我们在计算机视觉中常用的RGB图像差异很大，后者只是一个多维矩阵，是一个数学上的概念，而在SimpleITK中，图像是一种物理实体，图像中的每一个像素都是物理空间中的一个点，不光有着像素值，还有着坐标，间距，方向等概念。本文将介绍python版SimpleITK读取DICOM并从DICOM study中">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-01-08T10:23:51.662Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ray-sr.github.io/2020/01/08/使用SimpleITK读取DICOM/"/>
+
+
+
+
+
+  <title>使用SimpleITK读取DICOM | Ray's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?8c0f5ad823e9952704895d05ecf425f1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ray's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ray-sr.github.io/2020/01/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ray">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ray's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">使用SimpleITK读取DICOM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-08T10:38:01+08:00">
+                2020-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DICOM/" itemprop="url" rel="index">
+                    <span itemprop="name">DICOM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>SimpleITK是ITK的简化接口，专门用于处理医学影像，在SimpleITK中，图像的概念与我们在计算机视觉中常用的RGB图像差异很大，后者只是一个多维矩阵，是一个数学上的概念，而在SimpleITK中，图像是一种物理实体，图像中的每一个像素都是物理空间中的一个点，不光有着像素值，还有着坐标，间距，方向等概念。本文将介绍python版SimpleITK读取DICOM并从DICOM study中提取需要的序列的方法。</p>
+<a id="more"></a>
+
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p><code>pip install SimpleITK</code></p>
+<h2 id="读取DICOM影像"><a href="#读取DICOM影像" class="headerlink" title="读取DICOM影像"></a>读取DICOM影像</h2><ul>
+<li>读取单张DICOM影像</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SimpleITK <span class="keyword">as</span> sitk</span><br><span class="line"></span><br><span class="line">file = sitk.ReadImage(filepath)</span><br><span class="line"> </span><br><span class="line"> <span class="comment"># 图像大小</span></span><br><span class="line">file.GetSize()</span><br><span class="line"><span class="comment"># 坐标原点</span></span><br><span class="line">file.GetOrigin()  </span><br><span class="line"><span class="comment"># 像素间距</span></span><br><span class="line">file.GetSpacing()</span><br><span class="line"><span class="comment"># 方向</span></span><br><span class="line">file.GetDirection()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取影像元数据(返回DICOM tags元组)</span></span><br><span class="line">file.GetMetaDataKeys()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 像素矩阵</span></span><br><span class="line">pixel_array = sitk.GetArrayFromImage(file)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>读取DICOM序列<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> SimpleITK <span class="keyword">as</span> sitk</span><br><span class="line"></span><br><span class="line">path = <span class="string">"/dicom_study_dir"</span></span><br><span class="line"></span><br><span class="line">reader = sitk.ImageSeriesReader()</span><br><span class="line">seriesIDs = reader.GetGDCMSeriesIDs(path)</span><br><span class="line">dicom_names = reader.GetGDCMSeriesFileNames(path, seriesID[<span class="number">0</span>])</span><br><span class="line">reader.SetFileNames(dicom_names)</span><br><span class="line">image = reader.Execute()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="读取特定序列并保存为NIfTI格式"><a href="#读取特定序列并保存为NIfTI格式" class="headerlink" title="读取特定序列并保存为NIfTI格式"></a>读取特定序列并保存为NIfTI格式</h2><p>医学影像处理时，常常需要三维格式的数据，可以利用SimpleITK从DICOM study文件夹中提取需要的序列，并写入NIfTI文件。以下为示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> SimpleITK <span class="keyword">as</span> sitk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从DICOM影像中读取Tag信息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_tag</span><span class="params">(dcm, key, default_value=<span class="string">''</span>)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        value = dcm.GetMetaData(key).strip()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        logging.error(e)</span><br><span class="line">        value = default_value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从DICOM study文件夹中提取需要的序列并转换</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">extract_series</span><span class="params">(study_dir, series_desc)</span>:</span></span><br><span class="line">    <span class="comment"># 获取所有series id,返回一个元组</span></span><br><span class="line">    series_ids = sitk.ImageSeriesReader.GetGDCMSeriesIDs(study_dir)</span><br><span class="line">    <span class="keyword">for</span> series_id <span class="keyword">in</span> series_ids:</span><br><span class="line">        <span class="comment"># 获取该序列的所有DICOM影像，返回一个包含该序列所有影像路径的元组</span></span><br><span class="line">        files = sitk.ImageSeriesReader.GetGDCMSeriesFileNames(study_dir, series_id, recursive=<span class="literal">False</span>, useSeriesDetails=<span class="literal">False</span>)</span><br><span class="line">        reader = sitk.ImageSeriesReader()</span><br><span class="line">        reader.SetFileNames(files)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            img = reader.Execute()</span><br><span class="line">        <span class="keyword">except</span> RuntimeError <span class="keyword">as</span> e:</span><br><span class="line">            <span class="comment"># 有的DICOM影像将一个序列所有影像都放在同一张DICOM文件中（MultiFrame），读取时会出现下面这个异常</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">'The file in the series have unsupported 3 dimensions'</span> <span class="keyword">in</span> str(e):</span><br><span class="line">                img = sitk.ReadImage(files[<span class="number">0</span>])</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                logging.error(<span class="string">'Error in reading image, dir %s, series id %s, detail message: %s'</span> % (study_dir, series_id, e))</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">		<span class="comment"># 从当前序列取一张影像，便于读取其Tag信息                </span></span><br><span class="line">        dcm = sitk.ReadImage(files[<span class="number">0</span>])</span><br><span class="line">        <span class="comment"># 获取当前序列的序列描述</span></span><br><span class="line">        series_description = get_tag(dcm, <span class="string">'0008|103e'</span>)</span><br><span class="line">        <span class="comment"># 判断是否是需要的序列</span></span><br><span class="line">        <span class="keyword">if</span> series_description == series_desc:</span><br><span class="line">            nii_name = str(series_id) + <span class="string">"nii.gz"</span></span><br><span class="line">            <span class="comment"># 写入nii.gz文件</span></span><br><span class="line">            sitk.WriteImage(img, os.path.join(study_dir, nii_name))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DICOM/" rel="tag"><i class="fa fa-tag"></i> DICOM</a>
+          
+            <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          
+            <a href="/tags/SimpleITK/" rel="tag"><i class="fa fa-tag"></i> SimpleITK</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/05/Django%E5%AE%9E%E7%8E%B0%E5%8D%95%E8%AE%BE%E5%A4%87%E7%99%BB%E5%BD%95%E9%99%90%E5%88%B6/" rel="next" title="Django实现单设备登录限制">
+                <i class="fa fa-chevron-left"></i> Django实现单设备登录限制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/08/Orthanc%20+%20OHIF%20%E6%90%AD%E5%BB%BADICOM%20web%20viewer/" rel="prev" title="Orthanc + OHIF 搭建DICOM web viewer">
+                Orthanc + OHIF 搭建DICOM web viewer <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Ray" />
+          <p class="site-author-name" itemprop="name">Ray</p>
+           
+              <p class="site-description motion-element" itemprop="description">Keep moving, keep thinking.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读取DICOM影像"><span class="nav-number">2.</span> <span class="nav-text">读取DICOM影像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读取特定序列并保存为NIfTI格式"><span class="nav-number">3.</span> <span class="nav-text">读取特定序列并保存为NIfTI格式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <!--
+    <i class="fa fa-heart"></i>
+    -->
+    <i class="fas fa-wheat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ray</span>
+</div>
+
+
+<!--
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/three.min.js"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
