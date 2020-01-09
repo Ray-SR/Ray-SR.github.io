@@ -1,158 +1,526 @@
 <!DOCTYPE html>
+<html lang="en">
 
 
 
-  
 
 
-<html class="theme-next mist use-motion" lang="en">
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>Django实现语言切换 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
 
 
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
 
 
-  
-  
-  
-  
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
 
-  
+
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/default.png')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Monday, January 8th 2018, 6:38 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      4 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
     
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p>Django提供了实现多语言切换的中间件，可以实现模板（templates）、视图（views）以及JavaScript中语言的切换。基本的模式是在代码中对需要切换的内容加上标签，然后在翻译文件中填充翻译过后的字符串，最后编译即可。本文以中英文切换为例，介绍如果在Django中实现语言的切换。参考文档：<a href="https://djangobook-cn.readthedocs.io/en/latest/chapter19.html" target="_blank" rel="noopener">https://djangobook-cn.readthedocs.io/en/latest/chapter19.html</a></p>
+<a id="more"></a>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><ul>
+<li><p>首先在Django settings文件中加入中间件<code>django.middleware.locale.LocaleMiddleware</code></p>
+<pre><code class="python">MIDDLEWARE = [
+  &#39;django.middleware.security.SecurityMiddleware&#39;,
+  &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,
+  # django语言国际化中间件
+  &#39;django.middleware.locale.LocaleMiddleware&#39;,
+  &#39;django.middleware.common.CommonMiddleware&#39;,
+  &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,
+  &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,
+  &#39;django.contrib.messages.middleware.MessageMiddleware&#39;,
+  &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;,
+]</code></pre>
+</li>
+<li><p>然后增加<code>LANGUAGES</code>和<code>LOCALE_PATHS</code>配置，<code>locale</code>文件夹需要手动创建：</p>
+<pre><code class="python">LANGUAGES = (
+  (&#39;zh-hans&#39;, &#39;中文简体&#39;),
+  (&#39;en&#39;, &#39;English&#39;),
+)
+</code></pre>
+</li>
+</ul>
+<p>LOCALE_PATHS = (<br>    os.path.join(os.path.dirname(BASE_DIR), ‘locale’),<br>)</p>
+<pre><code>
+## 修改html模板文件
+
+- 首先需要在每个html第一行加入以下代码，可以将它放在公共页面
+```python
+{% load i18n %}</code></pre><ul>
+<li><p>在需要翻译的字符串上加上trans标签,例如：</p>
+<pre><code class="python">&lt;li&gt;&lt;a href=&quot;/management/language_set&quot;&gt;&lt;i class=&quot;ti-settings&quot;&gt;&lt;/i&gt; {% trans '语言设置' %}&lt;/a&gt;&lt;/li&gt;</code></pre>
+</li>
+<li><p>多次重复翻译的内容可以设置成常量：</p>
+<pre><code class="python">{% trans "This is the title" as the_title %}
+&lt;title&gt;{{ the_title }}&lt;/title&gt;
+&lt;meta name=&quot;description&quot; content=&quot;{{ the_title }}&quot;&gt;</code></pre>
+</li>
+<li><p>如果翻译的内容有django模板输出的变量，就需要用blocktrans和endblocktrans，例如：</p>
+<pre><code class="html">{% blocktrans %}This string will have {{ value }} inside.{% endblocktrans %}</code></pre>
+</li>
+</ul>
+<h2 id="后端视图"><a href="#后端视图" class="headerlink" title="后端视图"></a>后端视图</h2><ul>
+<li>如果Django后端视图中有返回中文字符串也需要切换成英文，可以利用django的<code>gettext</code>模块，代码示例如下：<pre><code class="python">from django.utils.translation import gettext as _
+</code></pre>
+</li>
+</ul>
+<p>def test_views(request):<br>    response_str = _(“中文字符串”)<br>    return HttpResponse(response_str)</p>
+<pre><code>
+- 需要注意，Django渲染模板时需要使用`render`而不是`render_to_response`
+
+## JavaScript中的语言转换
+
+- 首先在根`urls.py`文件中的`urlpatterns`列表中添加如下代码：
+```python
+url(r&#39;^jsi18n/$&#39;, JavaScriptCatalog.as_view(packages=[&#39;ProjectName&#39;]), name=&#39;javascript-catalog&#39;)</code></pre><ul>
+<li><p>然后在模板中引入js(可放在公共页面)</p>
+<pre><code class="python">&lt;script type=&quot;text/javascript&quot; src=&quot;{% url 'javascript-catalog' %}&quot;&gt;&lt;/script&gt;</code></pre>
+</li>
+<li><p>使用<code>gettext</code>在js中标记字符串，例如：</p>
+<pre><code class="javascript">function editpwd(){
+      layer.open({
+        type: 1,
+        title: gettext(&#39;修改密码&#39;),
+        maxmin: true,
+        shadeClose: true, //点击遮罩关闭层
+        area : [&#39;550px&#39; , &#39;&#39;],
+        content:$(&#39;#addsort_style&#39;),
+     })
+  }</code></pre>
+</li>
+<li><p>需要注意，必须将JavaScript代码单独放在.js文件中，不能写在html代码后面，否则后面生成翻译文件时检测不到</p>
+</li>
+</ul>
+<h2 id="翻译文件生成与编译"><a href="#翻译文件生成与编译" class="headerlink" title="翻译文件生成与编译"></a>翻译文件生成与编译</h2><ul>
+<li>添加完翻译的标记后，执行以下命令即可在<code>locale</code>文件夹下生成翻译文件：</li>
+</ul>
+<p><code>python manage.py makemessages -l en</code><br><code>python manage.py makemessages -d djangojs -l en</code></p>
+<ul>
+<li><p>执行成功后可以发现生成了<code>django.po</code>以及<code>djangojs.po</code>文件，然后就可以填充翻译后的字符串：</p>
+<pre><code class="python">#: DrBrain3/templates/Management/series_list.html:46
+#: DrBrain3/templates/Users/new_psw.html:89
+msgid &quot;确认修改&quot;
+msgstr &quot;Confirm the changes&quot;</code></pre>
+<p>需要注意，有时由于识别的错乱，执行<code>python manage.py makemessages -l en</code>后.po文件中会出现fuzzy的字眼，此时需要将.po文件中这些出现错乱的都删除，正确的翻译文件如上图所示</p>
+</li>
+<li><p>填充完所有翻译后的字符串，就可以执行编译命令生成.mo文件</p>
+</li>
+</ul>
+<p><code>python manage.py compilemessages</code></p>
+<h2 id="如何切换语言"><a href="#如何切换语言" class="headerlink" title="如何切换语言"></a>如何切换语言</h2><p>Django本身提供了语言切换的功能，可参考如下方法实现：</p>
+<ul>
+<li><p>在项目根路由文件<code>urls.py</code>中添加切换语言的url</p>
+<pre><code class="python">url(r&#39;^i18n/&#39;,include(&#39;django.conf.urls.i18n&#39;))</code></pre>
+</li>
+<li><p>html页面中添加如下form表单</p>
+<pre><code class="python">&lt;form action=&quot;{% url 'set_language' %}&quot; method=&quot;post&quot; id=&quot;change_language_form&quot; enctype=&quot;multipart/form-data&quot;&gt;
+  {% csrf_token %}
+  &lt;input type=&quot;hidden&quot; name=&quot;next&quot; value=&quot;&quot;/&gt;
+  &lt;select class=&quot;change_language&quot; name=&quot;language&quot; id=&quot;language&quot; onclick=&quot;changeLan()&quot;&gt;
+      {% for lang in LANGUAGES %}
+        	<option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected {% endifequal %}>{{ lang.1 }}</option>
+		{% endfor %}
+  &lt;/select&gt;
+&lt;/form&gt;</code></pre>
+</li>
+<li><p>JavaScript代码</p>
+<pre><code class="javascript">$(&#39;.change_language&#39;).change(function (e) {
+  e.preventDefault();
+  $(&#39;#change_language_form&#39;).submit();
+  return false
+</code></pre>
+</li>
+</ul>
+<p>});</p>
+<pre><code>
+- 登录时记录用户选择的语言
+
+在用户登录的后端视图中加入：
+```python
+request.session[&#39;_language&#39;]=&#39;zh-hans&#39;</code></pre>
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Django">Django</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/Django">Django</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+    <br>
+
     
   
-
-  
-
-  
-
-  
-
-  
-
-  
+    <!-- 不蒜子统计PV -->
     
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
     
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
   
 
 
 
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
 
 
 
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Django," />
-
-
-
-
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2" />
-
-
-
-
-
-
-<meta name="description" content="Django提供了实现多语言切换的中间件，可以实现模板（templates）、视图（views）以及JavaScript中语言的切换。基本的模式是在代码中对需要切换的内容加上标签，然后在翻译文件中填充翻译过后的字符串，最后编译即可。本文以中英文切换为例，介绍如果在Django中实现语言的切换。参考文档：https:&#x2F;&#x2F;djangobook-cn.readthedocs.io&#x2F;en&#x2F;latest&#x2F;c">
-<meta name="keywords" content="Django">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Django实现语言切换">
-<meta property="og:url" content="https:&#x2F;&#x2F;ray-sr.github.io&#x2F;2018&#x2F;01&#x2F;08&#x2F;Django%E5%AE%9E%E7%8E%B0%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2&#x2F;index.html">
-<meta property="og:site_name" content="Ray&#39;s Blog">
-<meta property="og:description" content="Django提供了实现多语言切换的中间件，可以实现模板（templates）、视图（views）以及JavaScript中语言的切换。基本的模式是在代码中对需要切换的内容加上标签，然后在翻译文件中填充翻译过后的字符串，最后编译即可。本文以中英文切换为例，介绍如果在Django中实现语言的切换。参考文档：https:&#x2F;&#x2F;djangobook-cn.readthedocs.io&#x2F;en&#x2F;latest&#x2F;c">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-01-09T04:18:51.556Z">
-<meta name="twitter:card" content="summary">
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Django实现语言切换&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
 
 
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Mist',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: true,
-    duoshuo: {
-      userId: '0',
-      author: 'Author'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
     }
-  };
-</script>
+    anchors.add(res.join(", "))
+  </script>
 
 
 
-  <link rel="canonical" href="https://ray-sr.github.io/2018/01/08/Django实现语言切换/"/>
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
 
 
 
-
-
-  <title>Django实现语言切换 | Ray's Blog</title>
-  
-
-
-
-
-
-  <script type="text/javascript">
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?8c0f5ad823e9952704895d05ecf425f1";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
   </script>
 
 
@@ -164,669 +532,6 @@
 
 
 
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" lang="en">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail ">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Ray's Blog</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle"></p>
-      
-  </div>
-
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-<nav class="site-nav">
-  
-
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            Home
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            Categories
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            About
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            Archives
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            Tags
-          </a>
-        </li>
-      
-
-      
-    </ul>
-  
-
-  
-</nav>
-
-
-
- </div>
-    </header>
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
-    
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://ray-sr.github.io/2018/01/08/Django%E5%AE%9E%E7%8E%B0%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ray">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">Django实现语言切换</h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-08T18:38:49+08:00">
-                2018-01-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Django/" itemprop="url" rel="index">
-                    <span itemprop="name">Django</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <p>Django提供了实现多语言切换的中间件，可以实现模板（templates）、视图（views）以及JavaScript中语言的切换。基本的模式是在代码中对需要切换的内容加上标签，然后在翻译文件中填充翻译过后的字符串，最后编译即可。本文以中英文切换为例，介绍如果在Django中实现语言的切换。参考文档：<a href="https://djangobook-cn.readthedocs.io/en/latest/chapter19.html" target="_blank" rel="noopener">https://djangobook-cn.readthedocs.io/en/latest/chapter19.html</a></p>
-<a id="more"></a>
-
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><ul>
-<li><p>首先在Django settings文件中加入中间件<code>django.middleware.locale.LocaleMiddleware</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MIDDLEWARE = [</span><br><span class="line">    <span class="string">'django.middleware.security.SecurityMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.sessions.middleware.SessionMiddleware'</span>,</span><br><span class="line">    <span class="comment"># django语言国际化中间件</span></span><br><span class="line">    <span class="string">'django.middleware.locale.LocaleMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.common.CommonMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.csrf.CsrfViewMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.auth.middleware.AuthenticationMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.contrib.messages.middleware.MessageMiddleware'</span>,</span><br><span class="line">    <span class="string">'django.middleware.clickjacking.XFrameOptionsMiddleware'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>然后增加<code>LANGUAGES</code>和<code>LOCALE_PATHS</code>配置，<code>locale</code>文件夹需要手动创建：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LANGUAGES = (</span><br><span class="line">    (<span class="string">'zh-hans'</span>, <span class="string">'中文简体'</span>),</span><br><span class="line">    (<span class="string">'en'</span>, <span class="string">'English'</span>),</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">LOCALE_PATHS = (</span><br><span class="line">    os.path.join(os.path.dirname(BASE_DIR), <span class="string">'locale'</span>),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h2 id="修改html模板文件"><a href="#修改html模板文件" class="headerlink" title="修改html模板文件"></a>修改html模板文件</h2><ul>
-<li><p>首先需要在每个html第一行加入以下代码，可以将它放在公共页面</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% load i18n %&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p>在需要翻译的字符串上加上trans标签,例如：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;li&gt;&lt;a href="/management/language_set"&gt;&lt;i class="ti-settings"&gt;&lt;/i&gt; &#123;% trans '语言设置' %&#125;&lt;/a&gt;&lt;/li&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>多次重复翻译的内容可以设置成常量：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% trans <span class="string">"This is the title"</span> <span class="keyword">as</span> the_title %&#125;</span><br><span class="line">&lt;title&gt;&#123;&#123; the_title &#125;&#125;&lt;/title&gt;</span><br><span class="line">&lt;meta name=<span class="string">"description"</span> content=<span class="string">"&#123;&#123; the_title &#125;&#125;"</span>&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果翻译的内容有django模板输出的变量，就需要用blocktrans和endblocktrans，例如：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% blocktrans %&#125;This string will have &#123;&#123; value &#125;&#125; inside.&#123;% endblocktrans %&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h2 id="后端视图"><a href="#后端视图" class="headerlink" title="后端视图"></a>后端视图</h2><ul>
-<li><p>如果Django后端视图中有返回中文字符串也需要切换成英文，可以利用django的<code>gettext</code>模块，代码示例如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.utils.translation <span class="keyword">import</span> gettext <span class="keyword">as</span> _</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_views</span><span class="params">(request)</span>:</span></span><br><span class="line">    response_str = _(<span class="string">"中文字符串"</span>)</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(response_str)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>需要注意，Django渲染模板时需要使用<code>render</code>而不是<code>render_to_response</code></p>
-</li>
-</ul>
-<h2 id="JavaScript中的语言转换"><a href="#JavaScript中的语言转换" class="headerlink" title="JavaScript中的语言转换"></a>JavaScript中的语言转换</h2><ul>
-<li><p>首先在根<code>urls.py</code>文件中的<code>urlpatterns</code>列表中添加如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r'^jsi18n/$'</span>, JavaScriptCatalog.as_view(packages=[<span class="string">'ProjectName'</span>]), name=<span class="string">'javascript-catalog'</span>)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>然后在模板中引入js(可放在公共页面)</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type="text/javascript" src="&#123;% url 'javascript-catalog' %&#125;"&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>使用<code>gettext</code>在js中标记字符串，例如：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">editpwd</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        layer.open(&#123;</span><br><span class="line">          type: <span class="number">1</span>,</span><br><span class="line">          title: gettext(<span class="string">'修改密码'</span>),</span><br><span class="line">          maxmin: <span class="literal">true</span>,</span><br><span class="line">          shadeClose: <span class="literal">true</span>, <span class="comment">//点击遮罩关闭层</span></span><br><span class="line">          area : [<span class="string">'550px'</span> , <span class="string">''</span>],</span><br><span class="line">          content:$(<span class="string">'#addsort_style'</span>),</span><br><span class="line">       &#125;)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>需要注意，必须将JavaScript代码单独放在.js文件中，不能写在html代码后面，否则后面生成翻译文件时检测不到</p>
-</li>
-</ul>
-<h2 id="翻译文件生成与编译"><a href="#翻译文件生成与编译" class="headerlink" title="翻译文件生成与编译"></a>翻译文件生成与编译</h2><ul>
-<li>添加完翻译的标记后，执行以下命令即可在<code>locale</code>文件夹下生成翻译文件：</li>
-</ul>
-<p><code>python manage.py makemessages -l en</code><br><code>python manage.py makemessages -d djangojs -l en</code></p>
-<ul>
-<li><p>执行成功后可以发现生成了<code>django.po</code>以及<code>djangojs.po</code>文件，然后就可以填充翻译后的字符串：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#: DrBrain3/templates/Management/series_list.html:46</span></span><br><span class="line"><span class="comment">#: DrBrain3/templates/Users/new_psw.html:89</span></span><br><span class="line">msgid <span class="string">"确认修改"</span></span><br><span class="line">msgstr <span class="string">"Confirm the changes"</span></span><br></pre></td></tr></table></figure>
-<p>需要注意，有时由于识别的错乱，执行<code>python manage.py makemessages -l en</code>后.po文件中会出现fuzzy的字眼，此时需要将.po文件中这些出现错乱的都删除，正确的翻译文件如上图所示</p>
-</li>
-<li><p>填充完所有翻译后的字符串，就可以执行编译命令生成.mo文件</p>
-</li>
-</ul>
-<p><code>python manage.py compilemessages</code></p>
-<h2 id="如何切换语言"><a href="#如何切换语言" class="headerlink" title="如何切换语言"></a>如何切换语言</h2><p>Django本身提供了语言切换的功能，可参考如下方法实现：</p>
-<ul>
-<li><p>在项目根路由文件<code>urls.py</code>中添加切换语言的url</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url(<span class="string">r'^i18n/'</span>,include(<span class="string">'django.conf.urls.i18n'</span>))</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>html页面中添加如下form表单</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=<span class="string">"&#123;% url 'set_language' %&#125;"</span> method=<span class="string">"post"</span> id=<span class="string">"change_language_form"</span> enctype=<span class="string">"multipart/form-data"</span>&gt;</span><br><span class="line">	&#123;% csrf_token %&#125;</span><br><span class="line">    &lt;input type=<span class="string">"hidden"</span> name=<span class="string">"next"</span> value=<span class="string">""</span>/&gt;</span><br><span class="line">	&lt;select class="change_language" name="language" id="language" onclick="changeLan()"&gt;</span><br><span class="line">		&#123;% <span class="keyword">for</span> lang <span class="keyword">in</span> LANGUAGES %&#125;</span><br><span class="line">        	&lt;option value="&#123;&#123; lang.0 &#125;&#125;"&#123;% ifequal lang.0 LANGUAGE_CODE %&#125; selected &#123;% endifequal %&#125;&gt;&#123;&#123; lang.1 &#125;&#125;&lt;/option&gt;</span><br><span class="line">		&#123;% endfor %&#125;</span><br><span class="line">	&lt;/select&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>JavaScript代码</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.change_language'</span>).change(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    e.preventDefault();</span><br><span class="line">    $(<span class="string">'#change_language_form'</span>).submit();</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>登录时记录用户选择的语言</p>
-</li>
-</ul>
-<p>在用户登录的后端视图中加入：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.session[<span class="string">'_language'</span>]=<span class="string">'zh-hans'</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Django/" rel="tag"><i class="fa fa-tag"></i> Django</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/09/05/Django%E5%AE%9E%E7%8E%B0%E5%8D%95%E8%AE%BE%E5%A4%87%E7%99%BB%E5%BD%95%E9%99%90%E5%88%B6/" rel="next" title="Django实现单设备登录限制">
-                <i class="fa fa-chevron-left"></i> Django实现单设备登录限制
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM/" rel="prev" title="使用SimpleITK读取DICOM">
-                使用SimpleITK读取DICOM <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-  <div class="comments" id="comments">
-    
-  </div>
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
-          </li>
-        </ul>
-      
-
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.jpg"
-               alt="Ray" />
-          <p class="site-author-name" itemprop="name">Ray</p>
-           
-              <p class="site-description motion-element" itemprop="description">Keep moving, keep thinking.</p>
-          
-        </div>
-        <nav class="site-state motion-element">
-
-          
-            <div class="site-state-item site-state-posts">
-              <a href="/archives/">
-                <span class="site-state-item-count">7</span>
-                <span class="site-state-item-name">posts</span>
-              </a>
-            </div>
-          
-
-          
-            
-            
-            <div class="site-state-item site-state-categories">
-              <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
-                <span class="site-state-item-name">categories</span>
-              </a>
-            </div>
-          
-
-          
-            
-            
-            <div class="site-state-item site-state-tags">
-              <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
-                <span class="site-state-item-name">tags</span>
-              </a>
-            </div>
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        
-        
-
-        
-
-
-      </section>
-
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">1.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改html模板文件"><span class="nav-number">2.</span> <span class="nav-text">修改html模板文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后端视图"><span class="nav-number">3.</span> <span class="nav-text">后端视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript中的语言转换"><span class="nav-number">4.</span> <span class="nav-text">JavaScript中的语言转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#翻译文件生成与编译"><span class="nav-number">5.</span> <span class="nav-text">翻译文件生成与编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何切换语言"><span class="nav-number">6.</span> <span class="nav-text">如何切换语言</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright" >
-  
-  &copy;  2017 - 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <!--
-    <i class="fa fa-heart"></i>
-    -->
-    <i class="fas fa-wheat"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Ray</span>
-</div>
-
-
-<!--
-<div class="powered-by">
-  Powered by <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
-</div>
-
-<div class="theme-info">
-  Theme -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
-    NexT.Mist
-  </a>
-</div>
--->
-
-
-
-        
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-  </div>
-
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-  
-
-
-
-  
-  
-
-
-
-
-
-
-
-
-
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-  
-  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
-
-  
-  <script type="text/javascript" src="/lib/three/three.min.js"></script>
-
-  
-  <script type="text/javascript" src="/lib/three/three-waves.min.js"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
-
-
-
-  
-  
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
 </body>
 </html>
