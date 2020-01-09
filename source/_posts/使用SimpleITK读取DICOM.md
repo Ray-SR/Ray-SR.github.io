@@ -1,6 +1,6 @@
 ---
 title: 使用SimpleITK读取DICOM
-date: 2020-01-08 10:38:01
+date: 2019-06-08 19:38:01
 tags: [SimpleITK,DICOM,Python]
 categories: DICOM
 ---

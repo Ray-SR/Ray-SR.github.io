@@ -1,6 +1,6 @@
 ---
 title: Django实现单设备登录限制
-date: 2020-01-05 15:38:49
+date: 2017-09-05 20:58:59
 tags: [Django,Python]
 categories: Django
 ---

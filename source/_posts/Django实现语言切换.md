@@ -1,6 +1,6 @@
 ---
 title: Django实现语言切换
-date: 2020-01-08 18:38:49
+date: 2018-01-08 18:38:49
 tags: Django
 categories: Django
 ---

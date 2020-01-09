@@ -1,6 +1,6 @@
 ---
 title: DICOM Tag中文编码问题
-date: 2020-01-08 15:38:49
+date: 2019-10-15 17:38:49
 tags: [DICOM,Python,pydicom]
 categories: DICOM
 ---
