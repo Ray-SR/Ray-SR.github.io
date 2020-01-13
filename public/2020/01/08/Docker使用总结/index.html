@@ -105,7 +105,7 @@
 </nav>
 
     <div class="view intro-2" id="background"
-         style="background: url('/img/default.png')no-repeat center center;
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
            background-size: cover;
            background-attachment: fixed;">
       <div class="full-bg-img">
@@ -175,11 +175,11 @@
 <li><strong>镜像 image</strong></li>
 </ul>
 <p>Docker中镜像的概念类似于虚拟机的镜像，它是一个包含有文件系统的面向Docker引擎的只读模板，简单的理解它就是构建一个容器的基础。我们可以基于镜像去创建一个容器，也可以将容器打包成镜像。Docker的官方镜像仓库(Docker hub)中提供了许多软件的镜像，例如我们执行<code>docker search python</code>就可以看到各种python镜像。<br><img src="/img/Docker/1.png" srcset="/img/loading.gif" alt="1.png"><br>实际应用中，我们通常会将自己的开发环境、代码、配置等打包成一个镜像，然后将它发布到生产环境中，这样，就不必为环境是否兼容而担心，因为代码运行所需的一切资源都已经包含的镜像当中了，我们只需要基于它创建容器并启动运行即可。</p>
-<p>要下载某个镜像，可以直接从Docker官方镜像仓库中拉取，例如执行<code>docker pull python</code>就可以直接拉取一个官方python镜像，再执行<code>docker images</code>就可以看到电脑中所有镜像了。以后对镜像指定的操作，可以基于镜像的名字，或者镜像ID（IMAGE ID）。<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1578881150417-1297dc26-9be7-4481-9d23-a555d69b8dd5.png#align=left&display=inline&height=311&name=2.png&originHeight=311&originWidth=1092&size=61493&status=done&style=none&width=1092" srcset="/img/loading.gif" alt="2.png"></p>
+<p>要下载某个镜像，可以直接从Docker官方镜像仓库中拉取，例如执行<code>docker pull python</code>就可以直接拉取一个官方python镜像，再执行<code>docker images</code>就可以看到电脑中所有镜像了。以后对镜像指定的操作，可以基于镜像的名字，或者镜像ID（IMAGE ID）。<br><img src="/img/Docker/2.png" srcset="/img/loading.gif" alt="2.png"></p>
 <ul>
 <li><strong>容器 container</strong></li>
 </ul>
-<p>有了镜像我们就可以创建一个容器，容器类似于一个轻量级的沙盒，Docker利用容器来运行、隔离不同的应用，它是镜像创建的应用实例，各个容器之间互不影响。需要注意，镜像本身是只读的，我们基于一个镜像启动了容器，Docker只是在镜像的上层创建了一个可写层，镜像本身不变。执行<code>docker ps -a</code>或者<code>docker container ls -a</code>就可以看到所有正在运行或不在运行的容器：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1578881800579-dd5c3abf-1a83-4bfe-b0f9-4dad8dee5da7.png#align=left&display=inline&height=133&name=3.png&originHeight=133&originWidth=1746&size=21464&status=done&style=none&width=1746" srcset="/img/loading.gif" alt="3.png"></p>
+<p>有了镜像我们就可以创建一个容器，容器类似于一个轻量级的沙盒，Docker利用容器来运行、隔离不同的应用，它是镜像创建的应用实例，各个容器之间互不影响。需要注意，镜像本身是只读的，我们基于一个镜像启动了容器，Docker只是在镜像的上层创建了一个可写层，镜像本身不变。执行<code>docker ps -a</code>或者<code>docker container ls -a</code>就可以看到所有正在运行或不在运行的容器：<br><img src="/img/Docker/3.png" srcset="/img/loading.gif" alt="3.png"></p>
 <p>我们可以将一个web应用所有环境都放在同一个容器中，但为了解耦，也可以将不同的应用隔离开来，放在不同容器当中。同样的，每个容器都有自己的名字和ID，如上图所示，<code>IMAGE</code>一栏表示当前容器是基于哪个镜像创建的；<code>COMMAND</code>代表容器启动时执行的命令，通常是某个服务启动的命令，这样容器启动后服务就可以同时启动；<code>PORTS</code>则展示了从宿主机到容器的ip、端口映射关系，例如我们想给某个<code>nginx</code>应用绑定<code>80</code>端口，就可以将宿主机的80端口映射到nginx容器的80端口，这样，访问<code>http://宿主机ip:80</code>将相当于访问<code>nginx</code>应用了。</p>
 <p>关于容器还有一些其他重要概念,主要是在启动容器时可能会使用的一些配置，通常我们使用<code>docker run -xxx xxx image_name</code>创建容器，常用的一些参数如下：</p>
 <p>–后台运行<br>通常启动容器后不加特别参数会直接进入容器，如果想让它在后台运行，可以加上<code>-d</code>参数</p>
@@ -195,9 +195,11 @@
 <ul>
 <li><strong>docker commit的方式</strong></li>
 </ul>
-<p>–在获取了一个基础镜像后，我们可以基于它启动一个容器，如<code>docker run -itd --name python_container python /bin/bash</code>命令创建并启动一个python容器：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1578886876170-7423691c-cf2c-4554-bb64-f301db42c93f.png#align=left&display=inline&height=68&name=4.png&originHeight=68&originWidth=1527&size=12369&status=done&style=none&width=1527" srcset="/img/loading.gif" alt="4.png"></p>
+<p>–在获取了一个基础镜像后，我们可以基于它启动一个容器，如<code>docker run -itd --name python_container python /bin/bash</code>命令创建并启动一个python容器：<br><img src="/img/Docker/6.png" srcset="/img/loading.gif" alt="6.png"></p>
+<p>查看容器<br><img src="/img/Docker/4.png" srcset="/img/loading.gif" alt="4.png"></p>
 <p>–随后执行<code>docker exec -it python_container /bin/bash</code>进入容器，我们可以在容器中安装依赖环境，例如将项目中的<code>requirements.txt</code>放入容器后执行<code>pip install -r requirements.txt</code>，执行完毕，退出容器</p>
-<p>–最后，通过<code>docker commit python_container new_python_image</code>命令将安装好依赖的python容器打包成一个名为<code>new_python_image</code>的镜像，此时通过<code>docker images</code>就可以看到新的镜像了</p>
+<p>–最后，通过<code>docker commit python_container new_python_image</code>命令将安装好依赖的python容器打包成一个名为<code>new_python_image</code>的镜像，此时通过<code>docker images</code>就可以看到新的镜像了.<br>提交镜像:<br><img src="/img/Docker/5.png" srcset="/img/loading.gif" alt="5.png"></p>
+<p>查看制作好的镜像:<br><img src="/img/Docker/7.png" srcset="/img/loading.gif" alt="7.png"></p>
 <ul>
 <li><strong>Dockerfile的方式</strong></li>
 </ul>
@@ -435,7 +437,7 @@ networks:
         "Docker使用总结&nbsp;",
       ],
       cursorChar: "_",
-      typeSpeed: 70,
+      typeSpeed: 80,
       loop: false,
     });
     typed.stop();
