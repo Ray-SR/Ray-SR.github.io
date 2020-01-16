@@ -24,7 +24,7 @@ file = sitk.ReadImage(filepath)
  # 图像大小
 file.GetSize()
 # 坐标原点
-file.GetOrigin()  
+file.GetOrigin()
 # 像素间距
 file.GetSpacing()
 # 方向
@@ -38,6 +38,7 @@ pixel_array = sitk.GetArrayFromImage(file)
 ```
 
 - 读取DICOM序列
+
 ```python
 import os
 import SimpleITK as sitk
@@ -49,6 +50,7 @@ seriesIDs = reader.GetGDCMSeriesIDs(path)
 dicom_names = reader.GetGDCMSeriesFileNames(path, seriesID[0])
 reader.SetFileNames(dicom_names)
 image = reader.Execute()
+
 ```
 
 ## 读取特定序列并保存为NIfTI格式

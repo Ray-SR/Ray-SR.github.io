@@ -341,6 +341,67 @@ Docker中镜像的概念类似于虚拟机的镜像，它是一个包含有文�
     
     
     <div class="col-12 col-md-8 m-auto">
+      <a href="/2019/06/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM%20(1)/">
+        <p class="h4 index-header">使用SimpleITK读取DICOM2</p>
+        
+        
+          
+        
+        <div class="index-excerpt" >
+          <div class="index-text mb-1">SimpleITK是ITK的简化接口，专门用于处理医学影像，在SimpleITK中，图像的概念与我们在计算机视觉中常用的RGB图像差异很大，后者只是一个多维矩阵，是一个数学上的概念，而在SimpleITK中，图像是一种物理实体，图像中的每一个像素都是物理空间中的一个点，不光有着像素值，还有着坐标，间距，方向等概念。本文将介绍python版SimpleITK读取DICOM并从DICOM study中提取需要的序列的方法。
+安装pip install SimpleITK
+读取DICOM影像
+读取单张DICOM影像
+
+import SimpleITK as sitk
+
+file = sitk.ReadImage(filepath)
+
+ # 图像大小
+file.GetSize()
+# 坐标原点
+file.GetOrigin()  
+# 像素间距
+file.GetSpacing()
+# 方向
+file.GetDirection()
+
+# 获取影像元数据(返回DICOM tags元组)
+file.GetMetaDataKeys()
+
+# 像素矩阵
+pixel_array = sitk.GetArr</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2019-06-08&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/DICOM">DICOM</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/Python">Python</a>&nbsp;
+          
+            <a href="/tags/SimpleITK">SimpleITK</a>&nbsp;
+          
+            <a href="/tags/DICOM">DICOM</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
       <a href="/2019/06/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM/">
         <p class="h4 index-header">使用SimpleITK读取DICOM</p>
         
