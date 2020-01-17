@@ -129,7 +129,7 @@
                   
                   &nbsp;<i class="far fa-chart-bar"></i>
                   <span class="post-count">
-                    591 字
+                    593 字
                   </span>&nbsp;
                 
 
@@ -196,18 +196,21 @@ file.GetMetaDataKeys()
 # 像素矩阵
 pixel_array = sitk.GetArrayFromImage(file)</code></pre>
 <ul>
-<li>读取DICOM序列<pre><code class="python">import os
-import SimpleITK as sitk
-</code></pre>
-</li>
+<li>读取DICOM序列</li>
 </ul>
-<p>path = “/dicom_study_dir”</p>
-<p>reader = sitk.ImageSeriesReader()<br>seriesIDs = reader.GetGDCMSeriesIDs(path)<br>dicom_names = reader.GetGDCMSeriesFileNames(path, seriesID[0])<br>reader.SetFileNames(dicom_names)<br>image = reader.Execute()</p>
-<pre><code>
-## 读取特定序列并保存为NIfTI格式
-医学影像处理时，常常需要三维格式的数据，可以利用SimpleITK从DICOM study文件夹中提取需要的序列，并写入NIfTI文件。以下为示例：
-```python
-import logging
+<pre><code class="python">import os
+import SimpleITK as sitk
+
+path = &quot;/dicom_study_dir&quot;
+
+reader = sitk.ImageSeriesReader()
+seriesIDs = reader.GetGDCMSeriesIDs(path)
+dicom_names = reader.GetGDCMSeriesFileNames(path, seriesID[0])
+reader.SetFileNames(dicom_names)
+image = reader.Execute()
+</code></pre>
+<h2 id="读取特定序列并保存为NIfTI格式"><a href="#读取特定序列并保存为NIfTI格式" class="headerlink" title="读取特定序列并保存为NIfTI格式"></a>读取特定序列并保存为NIfTI格式</h2><p>医学影像处理时，常常需要三维格式的数据，可以利用SimpleITK从DICOM study文件夹中提取需要的序列，并写入NIfTI文件。以下为示例：</p>
+<pre><code class="python">import logging
 import os
 import SimpleITK as sitk
 
@@ -251,6 +254,7 @@ def extract_series(study_dir, series_desc):
         else:
             continue
 </code></pre>
+
             <hr>
           </div>
           <br>
