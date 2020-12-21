@@ -143,6 +143,254 @@
     
     
     <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/27/Kubernetes%E5%9F%BA%E7%A1%80/">
+        <p class="h4 index-header">Kubernetes基础</p>
+        
+        
+          
+          
+        
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">k8s 把数量众多的服务器重新抽象为一个统一的资源池，对于运维人员来说，他们面前没有服务器1、服务器2的概念，而是一个统一的资源池，增加新的服务器对运维人员来说，只是增加自资源池的可用量。不仅如此，k8s 把所有能用的东西都抽象成了资源的概念，从而提供了一套更统一，更简洁的管理方式。...</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-27&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/kubernetes">kubernetes</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/Docker">Docker</a>&nbsp;
+          
+            <a href="/tags/kubernetes">kubernetes</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/27/Gitlab%20CI_CD%20+%20Docker%E9%83%A8%E7%BD%B2/">
+        <p class="h4 index-header">Gitlab CI/CD + Docker部署</p>
+        
+        
+          
+          
+        
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">利用Gitlab的CI/CD功能可以很方便地进行项目的持续集成和部署，我们还可以配合Docker来进一步完善服务器部署。本文介绍了如何使用docker-swarm这个工具来部署一套Django + Mysql + Redis的项目，并且配合Gitlab的CI、CD功能，实现自动部署、滚动更新。...</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-27&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/CI/CD">CI/CD</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/Docker">Docker</a>&nbsp;
+          
+            <a href="/tags/CI/CD">CI/CD</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/27/Gitlab%20CI_CD%E9%85%8D%E7%BD%AE/">
+        <p class="h4 index-header">Gitlab CI/CD配置</p>
+        
+        
+          
+          
+        
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">Gitlab有自带的CI/CD功能，只需要在项目根目录新建一个.gitlab-ci.yml文件，推送到仓库中，即可创建一个pipeline，并通过注册好的runner部署、运行项目...</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-27&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/CI/CD">CI/CD</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/CI/CD">CI/CD</a>&nbsp;
+          
+            <a href="/tags/Git">Git</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/26/Jenkins%20+%20Gitlab%20+%20Django%E5%AE%9E%E7%8E%B0%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90/">
+        <p class="h4 index-header">Jenkins + Gitlab + Django实现持续集成</p>
+        
+        
+          
+        
+        <div class="index-excerpt" >
+          <div class="index-text mb-1">基于ubuntu18.04搭建一套持续集成、部署的系统，在本地推送(push)代码到Gitlab后，通过Gitlab的webhook触发Jenkins任务，自动拉取代码并部署到生产服务器运行。
+1. Jenkins搭建
+查看是否安装了java
+
+java -version
+
+如果没有安装java,则执行下面的命令安装
+
+sudo apt-get install openjdk-8-jre
+
+配置java环境变量，在/etc/profile中添加以下内容：
+#set jdk environment 
+export JAVA_HOME=/usr/lib/jvm/Java-8-openjdk-amd64 
+export JRE_HOME=$JAVA_HOME/jre 
+export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH 
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+
+使配置文件生效
+
+
+source /etc/profile
+
+安装Jenkins
+wget -q -O - http</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-26&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/CI/CD">CI/CD</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/CI/CD">CI/CD</a>&nbsp;
+          
+            <a href="/tags/Jenkins">Jenkins</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/22/Supervisor%E4%BD%BF%E7%94%A8/">
+        <p class="h4 index-header">使用Supervisor部署Django项目</p>
+        
+        
+          
+          
+        
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">supervisor是一个python开发的、通用的进程监控、管理工具，可以将一个普通的命令行进程变为后台daemon,并且监控进程状态，异常自动重启。相较于nohup的方式，这种部署方式使用起来更方便简洁，并且运行也更稳定。...</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-22&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/Python">Python</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/Django">Django</a>&nbsp;
+          
+            <a href="/tags/supervisor">supervisor</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
+      <a href="/2020/12/21/docker-compose%E5%90%AF%E5%8A%A8Mysql%20&%20Redis/">
+        <p class="h4 index-header">docker-compose启动Mysql和Redis</p>
+        
+        
+          
+          
+        
+        <div class="index-excerpt" style="max-height: none;">
+          <div class="index-text mb-1">本文介绍了如何使用Docker快速在本地部署一套Mysql + Redis...</div>
+        </div>
+      </a>
+
+      <div>
+        
+          <i class="iconfont icon-riqi2"></i>&nbsp;2020-12-21&nbsp;&nbsp;
+        
+        
+          <i class="iconfont icon-inbox"></i>
+          
+            <a href="/categories/Docker">Docker</a>&nbsp;
+          &nbsp;
+        
+        
+          <i class="iconfont icon-tag"></i>
+          
+            <a href="/tags/Docker">Docker</a>&nbsp;
+          
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 mx-auto">
+    
+    
+    <div class="col-12 col-md-8 m-auto">
       <a href="/2020/02/20/Git%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
         <p class="h4 index-header">Git简介及常用操作</p>
         
@@ -295,199 +543,19 @@ Docker中镜像的概念类似于虚拟机的镜像，它是一个包含有文�
     </div>
   </div>
 
-  <div class="row mb-4 mx-auto">
-    
-    
-    <div class="col-12 col-md-8 m-auto">
-      <a href="/2019/10/15/DICOM%20Tag%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98/">
-        <p class="h4 index-header">DICOM Tag中文编码问题</p>
-        
-        
-          
-          
-        
-        <div class="index-excerpt" style="max-height: none;">
-          <div class="index-text mb-1">DICOM Tag信息一般都以英文存储，出现中文时，可能会出现显示为乱码的情况，而导致乱码的原因通常是，存储的信息含有中文，而DICOM tag中指定的编码格式SpecificCharacterSet并不支持中文....</div>
-        </div>
-      </a>
-
-      <div>
-        
-          <i class="iconfont icon-riqi2"></i>&nbsp;2019-10-15&nbsp;&nbsp;
-        
-        
-          <i class="iconfont icon-inbox"></i>
-          
-            <a href="/categories/DICOM">DICOM</a>&nbsp;
-          &nbsp;
-        
-        
-          <i class="iconfont icon-tag"></i>
-          
-            <a href="/tags/DICOM">DICOM</a>&nbsp;
-          
-            <a href="/tags/Python">Python</a>&nbsp;
-          
-            <a href="/tags/pydicom">pydicom</a>&nbsp;
-          
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-4 mx-auto">
-    
-    
-    <div class="col-12 col-md-8 m-auto">
-      <a href="/2019/06/25/%E4%BD%BF%E7%94%A8python%E5%B0%86PDF%E8%BD%AC%E6%8D%A2%E4%B8%BADICOM%E6%A0%BC%E5%BC%8F/">
-        <p class="h4 index-header">使用python将PDF转换为DICOM格式</p>
-        
-        
-          
-          
-        
-        <div class="index-excerpt" style="max-height: none;">
-          <div class="index-text mb-1">由于公司业务需要，尝试将AI辅助诊断报告（PDF格式）转换为DICOM格式，这样，当DICOM影像上传到云平台计算完成后，可以将生成的AI辅助诊断报告推送到医院PACS系统，医生就可以在DICOM viewer中同时看到病人原始影像和AI报告。...</div>
-        </div>
-      </a>
-
-      <div>
-        
-          <i class="iconfont icon-riqi2"></i>&nbsp;2019-06-25&nbsp;&nbsp;
-        
-        
-          <i class="iconfont icon-inbox"></i>
-          
-            <a href="/categories/DICOM">DICOM</a>&nbsp;
-          &nbsp;
-        
-        
-          <i class="iconfont icon-tag"></i>
-          
-            <a href="/tags/DICOM">DICOM</a>&nbsp;
-          
-            <a href="/tags/Python">Python</a>&nbsp;
-          
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-4 mx-auto">
-    
-    
-    <div class="col-12 col-md-8 m-auto">
-      <a href="/2019/06/08/%E4%BD%BF%E7%94%A8SimpleITK%E8%AF%BB%E5%8F%96DICOM/">
-        <p class="h4 index-header">使用SimpleITK读取DICOM</p>
-        
-        
-          
-          
-        
-        <div class="index-excerpt" style="max-height: none;">
-          <div class="index-text mb-1">SimpleITK是ITK的简化接口，专门用于处理医学影像，在SimpleITK中，图像的概念与我们在计算机视觉中常用的RGB图像差异很大，后者只是一个多维矩阵，是一个数学上的概念，而在SimpleITK中，图像是一种物理实体，图像中的每一个像素都是物理空间中的一个点，不光有着像素值，还有着坐标，间距，方向等概念。本文将介绍python版SimpleITK读取DICOM并从DICOM study中提取需要的序列的方法。...</div>
-        </div>
-      </a>
-
-      <div>
-        
-          <i class="iconfont icon-riqi2"></i>&nbsp;2019-06-08&nbsp;&nbsp;
-        
-        
-          <i class="iconfont icon-inbox"></i>
-          
-            <a href="/categories/DICOM">DICOM</a>&nbsp;
-          &nbsp;
-        
-        
-          <i class="iconfont icon-tag"></i>
-          
-            <a href="/tags/DICOM">DICOM</a>&nbsp;
-          
-            <a href="/tags/Python">Python</a>&nbsp;
-          
-            <a href="/tags/SimpleITK">SimpleITK</a>&nbsp;
-          
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-4 mx-auto">
-    
-    
-    <div class="col-12 col-md-8 m-auto">
-      <a href="/2018/01/08/Django%E5%AE%9E%E7%8E%B0%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/">
-        <p class="h4 index-header">Django实现语言切换</p>
-        
-        
-          
-          
-        
-        <div class="index-excerpt" style="max-height: none;">
-          <div class="index-text mb-1">Django提供了实现多语言切换的中间件，可以实现模板（templates）、视图（views）以及JavaScript中语言的切换。基本的模式是在代码中对需要切换的内容加上标签，然后在翻译文件中填充翻译过后的字符串，最后编译即可。本文以中英文切换为例，介绍如果在Django中实现语言的切换。参考文档：https://djangobook-cn.readthedocs.io/en/latest/chapter19.html...</div>
-        </div>
-      </a>
-
-      <div>
-        
-          <i class="iconfont icon-riqi2"></i>&nbsp;2018-01-08&nbsp;&nbsp;
-        
-        
-          <i class="iconfont icon-inbox"></i>
-          
-            <a href="/categories/Django">Django</a>&nbsp;
-          &nbsp;
-        
-        
-          <i class="iconfont icon-tag"></i>
-          
-            <a href="/tags/Django">Django</a>&nbsp;
-          
-        
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-4 mx-auto">
-    
-    
-    <div class="col-12 col-md-8 m-auto">
-      <a href="/2017/09/05/Django%E5%AE%9E%E7%8E%B0%E5%8D%95%E8%AE%BE%E5%A4%87%E7%99%BB%E5%BD%95%E9%99%90%E5%88%B6/">
-        <p class="h4 index-header">Django实现单设备登录限制</p>
-        
-        
-          
-          
-        
-        <div class="index-excerpt" style="max-height: none;">
-          <div class="index-text mb-1">本文旨在介绍Django项目实现单设备登录限制的一种方法，基于Django的session机制。...</div>
-        </div>
-      </a>
-
-      <div>
-        
-          <i class="iconfont icon-riqi2"></i>&nbsp;2017-09-05&nbsp;&nbsp;
-        
-        
-          <i class="iconfont icon-inbox"></i>
-          
-            <a href="/categories/Django">Django</a>&nbsp;
-          &nbsp;
-        
-        
-          <i class="iconfont icon-tag"></i>
-          
-            <a href="/tags/Python">Python</a>&nbsp;
-          
-            <a href="/tags/Django">Django</a>&nbsp;
-          
-        
-      </div>
-    </div>
-  </div>
 
 
+  <nav aria-label="index posts navigation">
+    <span class="pagination pg-blue justify-content-center mt-5" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fas fa-angle-double-right"></i></a>
+    </span>
+  </nav>
+  
+  <script>
+    for (ele of document.getElementById("pagination").getElementsByClassName("page-number")) {
+      ele.href += '#board';
+    }
+  </script>
 
 
 

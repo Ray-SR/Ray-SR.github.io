@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>使用python将PDF转换为DICOM格式 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Tuesday, June 25th 2019, 10:38 am
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.1k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      4 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p>由于公司业务需要，尝试将AI辅助诊断报告（PDF格式）转换为DICOM格式，这样，当DICOM影像上传到云平台计算完成后，可以将生成的AI辅助诊断报告推送到医院PACS系统，医生就可以在DICOM viewer中同时看到病人原始影像和AI报告。</p>
+<a id="more"></a>
+
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>DICOM影像通常分为三个层级：<code>Study</code>、<code>Series</code>、<code>Instance</code>，其中Study代表病人一次检查的全部影像，通常放在一个文件夹内，而Series则代表这次检查中的不同影像序列，每个序列的扫描参数、用途各有差异，而Instance则是代表每张影像的实体。为了区分影像，DICOM标准中对于Study、Series、Intance的序号（UID）命名有着明确的规范，另外对于影像的编码格式、传输语法以及影像信息都有要求，在创建DICOM影像时都要注意。</p>
+<p>DICOM tag信息主要分为三大部分，第一部分File Meta文件头，指定了影像最重要的基本信息，包含编码格式、传输语法等信息，第二部分则是常规的病人信息、影像信息字段，而影像的像素数据则保存在第三部分<code>Pixel Data</code>字段中。</p>
+<p>为了将PDF报告转换成DICOM格式，可以先利用<code>pdf2image</code>将PDF转换为常见的图片格式，再将图片转换为<code>bytes</code>类型数据，写入DICOM tag中的<code>Pixel Data</code>字段，同时还需要给这些创建的DICOM影像指定UID、编码格式、传输语法等Tag信息。</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>以下是PDF转DICOM的参考代码，注意这里的应用情况是将PDF转换后的DICOM影像写入到原始DICOM文件夹中，支持含有多页的PDF文件</p>
+<pre><code class="python">import os
+import tempfile
+import datetime
+import pydicom
+from pydicom.dataset import Dataset, FileDataset
+from pdf2image import convert_from_path
+
+
+# 从DICOM study文件夹中读取影像，返回最后一张（InstanceUID最大的一张）影像信息的字典
+def read_dcm(dicom_dir):
+    dicom_list = os.listdir(dicom_dir)
+    info_list = []
+    for dicom in dicom_list:
+        # 使用pydicom读取DICOM影像信息
+        ds = pydicom.dcmread(os.path.join(dicom_dir, dicom))
+
+        info_dict = {
+            &#39;MediaStorageSOPInstanceUID&#39;: ds.file_meta.MediaStorageSOPInstanceUID,
+            &#39;MediaStorageSOPClassUID&#39;: ds.file_meta.MediaStorageSOPClassUID,
+            &#39;ImplementationClassUID&#39;: ds.file_meta.ImplementationClassUID,
+            &#39;PatientName&#39;: ds.PatientName,
+            &#39;PatientID&#39;: ds.PatientID,
+            &#39;PatientSex&#39;: ds.PatientSex,
+            &#39;PatientBirthDate&#39;: ds.PatientBirthDate,
+            &#39;PatientAge&#39;: ds.PatientAge,
+            &#39;ContentDate&#39;: ds.ContentDate,
+            &#39;ContentTime&#39;: ds.ContentTime,
+            &#39;SOPClassUID&#39;: ds.SOPClassUID,
+            &#39;SOPInstanceUID&#39;: ds.SOPInstanceUID,
+            &#39;StudyInstanceUID&#39;: ds.StudyInstanceUID,
+            &#39;SeriesInstanceUID&#39;: ds.SeriesInstanceUID,
+            &#39;InstanceNumber&#39;: ds.InstanceNumber,
+            &#39;SeriesNumber&#39;: ds.SeriesNumber,
+        }
+        info_list.append(info_dict)
+
+    # 根据InstanceUID排序
+    sort_list = sorted(info_list, key=lambda x: x[&#39;MediaStorageSOPInstanceUID&#39;])
+
+    return sort_list[-1]
+
+
+# 将pdf报告转换后的图片数据写入DICOM影像，并放到原始DICOM文件夹中
+def write_dcm(index, img, dicom, dicom_dir):
+    # 用于将InstanceUID尾数加1
+    chguid = lambda x: x.replace(x[-1], str(int(x[-1]) + index + 1))
+
+    # 创建临时文件名
+    suffix = &#39;.dcm&#39;
+    filename_little_endian = tempfile.NamedTemporaryFile(suffix=suffix).name
+    # filename_big_endian = tempfile.NamedTemporaryFile(suffix=suffix).name
+
+    # 填充DICOM文件头必要信息
+    file_meta = Dataset()
+    file_meta.MediaStorageSOPClassUID = dicom[&#39;MediaStorageSOPClassUID&#39;]
+    file_meta.MediaStorageSOPInstanceUID = chguid(dicom[&#39;MediaStorageSOPInstanceUID&#39;])
+    file_meta.ImplementationClassUID = dicom[&#39;ImplementationClassUID&#39;]
+
+    # 创建一个FileDataset实例，初始时没有影像数据，只提供文件头(file meta)
+    ds = FileDataset(filename_little_endian, {}, file_meta=file_meta, preamble=b&quot;\0&quot; * 128)
+
+    # 加入DICOM tag信息（不包含所有）
+    ds.PatientName = dicom[&#39;PatientName&#39;]
+    ds.PatientID = dicom[&#39;PatientID&#39;]
+    ds.PatientSex = dicom[&#39;PatientSex&#39;]
+    ds.PatientBirthDate = dicom[&#39;PatientBirthDate&#39;]
+    ds.PatientAge = dicom[&#39;PatientAge&#39;]
+
+    # Set the transfer syntax
+    # ds.is_little_endian = True
+    # ds.is_implicit_VR = True
+
+    # 加入DICOM tag信息（不包含所有）
+    dt = datetime.datetime.now()
+    ds.ContentDate = dt
+    time_str = dt.strftime(&#39;%H%M%S.%f&#39;)
+    ds.ContentTime = time_str
+
+    # 生成StudyUID, SeriesUID, InstanceUID
+    ds.SOPClassUID = dicom[&#39;SOPClassUID&#39;]
+    ds.SOPInstanceUID = chguid(dicom[&#39;SOPInstanceUID&#39;])
+    ds.StudyInstanceUID = dicom[&#39;StudyInstanceUID&#39;]
+    ds.SeriesInstanceUID = dicom[&#39;SeriesInstanceUID&#39;] + &#39;.1&#39;
+    ds.InstanceNumber = index + 1
+    ds.SeriesNumber = str(int(dicom[&#39;SeriesNumber&#39;]) + 1)
+
+    # 指定影像参数
+    ds.Rows = img.size[1]
+    ds.Columns = img.size[0]
+    ds.SamplesPerPixel = 3
+    ds.PhotometricInterpretation = &quot;RGB&quot;
+    ds.HighBit = 7
+    ds.BitsStored = 8
+    ds.BitsAllocated = 8
+    ds.PixelRepresentation = 0
+
+    # 将img对象转换为bytes类型，写入PixelData字段
+    ds.PixelData = img.tobytes()
+
+    # 指定TransferSyntax等信息
+    ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRBigEndian
+    ds.is_little_endian = False
+    ds.is_implicit_VR = False
+
+    # 保存影像文件
+    file_name = &#39;report_{}.dcm&#39;.format(index)
+    file_path = os.path.join(dicom_dir, file_name)
+    ds.save_as(file_path)
+
+
+def main(pdf_path, dicom_dir):
+    # 将pdf转换为图片
+    images_list = convert_from_path(pdf_path)
+
+    # 从DICOM文件夹中读取最后一张影像的信息
+    dicom_info = read_dcm(dicom_dir)
+
+    # 创建DICOM影像并写入图片数据
+    for index, img in enumerate(images_list):
+        write_dcm(index, img, dicom_info, dicom_dir)
+
+
+if __name__ == &#39;__main__&#39;:
+    pdf_path = &#39;/home/ray/dcm_report/report.pdf&#39;
+    dicom_dir = &#39;/home/ray/dcm_report/dcm_data&#39;
+
+    main(pdf_path, dicom_dir)
+</code></pre>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/DICOM">DICOM</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/DICOM">DICOM</a>
+                
+                  <a class="hover-with-bg" href="/tags/Python">Python</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+<!--
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+-->
+
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "使用python将PDF转换为DICOM格式&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 80,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

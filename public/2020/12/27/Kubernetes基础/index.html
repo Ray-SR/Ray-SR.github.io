@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>Kubernetes基础 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+</head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Sunday, December 27th 2020, 9:59 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    2.8k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      11 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <meta name="referrer" content="no-referrer" />
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p><strong>k8s 把数量众多的服务器重新抽象为一个统一的资源池</strong>，对于运维人员来说，他们面前没有服务器1、服务器2的概念，而是一个统一的资源池，增加新的服务器对运维人员来说，只是增加自资源池的可用量。不仅如此，k8s 把所有能用的东西都抽象成了资源的概念，从而提供了一套更统一，更简洁的管理方式。</p>
+<a id="more"></a>
+
+<h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h2><h3 id="1-1-Pod"><a href="#1-1-Pod" class="headerlink" title="1.1 Pod"></a>1.1 Pod</h3><p>Pod是K8S中的最小工作单位， 和Docker中的容器类似， 不过pod是将一个或多个docker容器封装成一个统一的整体进行管理，并对外提供服务，同一个Pod内的容器可以共享网络栈、存储卷等。</p>
+<p>例如查看本机有哪些pod:  <code>kubectl get pods</code><br>查看命名空间为kube-system下的所有pod: <code>kubectl get pods -n kube-system</code></p>
+<ul>
+<li><strong>创建资源</strong></li>
+</ul>
+<p>k8s中所有资源都可以通过<code>kube create</code>命令创建，使用create创建资源有2种方式，一种是直接使用命令指定参数，另一种是通过<code>yaml</code>文件创建。例如新建一个名为<code>kubia-pod.yaml</code>的文件如下：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: kubia-manual
+spec:
+  containers:
+  - image: luksa/kubia
+    name: kubia
+    ports:
+    - containerPort: 8080
+      protocol: TCP</code></pre>
+<p>然后使用<code>kubectl create -f kubia-pod.yaml</code> 就可以创建一个pod<br>之后如果修改了配置，可以使用<code>kubectl apply -f kubia-pod.yaml</code>来重新应用配置</p>
+<h3 id="1-2-namespace"><a href="#1-2-namespace" class="headerlink" title="1.2 namespace"></a>1.2 namespace</h3><p>命名空间namespace是k8s中组的概念，提供同一服务的pod应该被放置在同一命名空间下， 如果不指定，pod默认被放在命名空间<code>default</code> 下</p>
+<h3 id="1-3-ReplicationController（副本控制器）"><a href="#1-3-ReplicationController（副本控制器）" class="headerlink" title="1.3 ReplicationController（副本控制器）"></a>1.3 ReplicationController（副本控制器）</h3><p>ReplicationController(RC)是pod的复制抽象，用于解决pod的扩容缩容问题, 它会确保任何时间Kubernetes中都有指定数量的Pod在运行。在此基础上，RC还提供了一些更高级的特性，比如滚动升级、升级回滚等。<br>RC通过label来关联pod， 对于pod，需要设置其自身的label进行表示，label是一些列的key/value对。在创建RC的时候，需要指定<strong>标签选择器</strong>(Label Selector)，生成之后，它就会通过选择器查找pod并将其纳入自己的管辖</p>
+<ul>
+<li><strong>标签：标签是k8s中用于分类资源而提供的一个属性，一个标签包含<code>标签名</code>和<code>标签值</code>， 例如<code>app=kubia</code>, k8s中绝大多数资源都是通过标签来筛选和控制pod的</strong></li>
+</ul>
+<p>一个简单的RC配置文件<code>kubia-rc.yaml</code>如下：</p>
+<pre><code class="yaml">apiVersion: v1
+# 说明类型为 rc
+kind: ReplicationController
+metadata:
+  name: kubia-controller
+spec:
+  # 这里指定了期望的副本数量
+  replicas: 3
+  # 这里指定了目标 pod 的选择器
+  selector:
+    # 目标 pod: app 标签的值为 kubia
+    app: kubia
+  # pod 模板
+  template:
+    metadata:
+      # 指定 pod 的标签
+      labels:
+        app: kubia
+    spec:
+      # 指定 pod 容器的内容
+      containers:
+      - name: kubia
+        image: luksa/kubia
+        ports:
+        - containerPort: 8080</code></pre>
+<p>使用<code>kubectl create -f kubia-rc.yaml</code>即可创建该副本控制器<br>此后，即使我们使用<code>kubectl delete</code>删除了该副本控制器管辖的3个pod，它仍然会自动创建新的。需要注意，RC是通过<strong>标签</strong>来管理pod的，如果修改了某个pod的标签，那么它就自动脱离了RC的控制</p>
+<ul>
+<li><strong>存活探针</strong></li>
+</ul>
+<p>副本控制器RC是通过存活探针来讲pod的数量控制在期望数量， 存活探针的检测方式包括3种：<code>HTTP GET请求</code> 、<code>TCP套接字</code> 、<code>Exec执行命令</code><br>一个带有存活探针的pod配置文件如下：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: kubia-liveness
+spec:
+  containers:
+  - image: luksa/kubia-unhealthy
+    name: kubia
+    # 这下面就是探针！
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080</code></pre>
+<h3 id="1-4-ReplicationSet"><a href="#1-4-ReplicationSet" class="headerlink" title="1.4 ReplicationSet"></a>1.4 ReplicationSet</h3><p>ReplicationSet(RS)是升级版的RC，区别在于RS引入了对基于子集的selector查询条件，而RC仅支持基于值相等的selector条件查询<br>一个RS的配置文件<code>kubia-rs.yaml</code>如下：</p>
+<pre><code class="yaml"># 需要指定对应的 apiVersion
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: kubia
+spec:
+  replicas: 3
+  selector:
+    # 只有这里和 rc 的写法不同
+    matchLabels:
+      app: kubia
+  template:
+    metadata:
+      labels:
+        app: kubia
+    spec:
+      containers:
+      - name: kubia
+        image: luksa/kubia
+        ports:
+        - containerPort: 8080</code></pre>
+<h3 id="1-5-Deployment"><a href="#1-5-Deployment" class="headerlink" title="1.5 Deployment"></a>1.5 Deployment</h3><p>Deployment为pod和RS提供声明式的更新能力, 通过在Deployment中描述期望的集群状态， Deployment Controller会将现在的集群状态逐步更新为期望的集群状态，其职责同样是为了保证pod的数量和健康，并且提供了RS之外的新特性：<br>事件和状态查看：可以查看Deployment的升级详细进度和状态。<br>　　　　<strong>回滚</strong>：当升级pod镜像或者相关参数的时候发现问题，可以使用回滚操作回滚到上一个稳定的版本或者指定的版本。<br>　　　　<strong>版本记录</strong>: 每一次对Deployment的操作，都能保存下来，给予后续可能的回滚使用。<br>　　　　<strong>暂停和启动</strong>：对于每一次升级，都能够随时暂停和启动。<br>　　　　<strong>多种升级方案</strong>：Recreate—-删除所有已存在的pod,重新创建新的; RollingUpdate—-滚动升级，逐步替换的策略，同时滚动升级时，支持更多的附加参数，例如设置最大不可用pod数量，最小升级间隔时间等等。</p>
+<h3 id="1-6-Service"><a href="#1-6-Service" class="headerlink" title="1.6 Service"></a>1.6 Service</h3><p>由于pod在受到RC调控时，其副本和虚拟ip的变化的，比如发生迁移或伸缩的时候。因此需要一个统一固定的ip或域名来访问，Service是pod的路由代理抽象，用于解决pod之间的路由发现问题，访问端只需要知道service的地址，由service来提供代理，Service和Pod之间同样是通过label来进行关联<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607671122045-2e14c059-845e-4090-a9ba-35935b1dd1f9.png#align=left&display=inline&height=421&margin=%5Bobject%20Object%5D&name=service.png&originHeight=421&originWidth=864&size=28962&status=done&style=stroke&width=864" srcset="/img/loading.gif" alt="service.png"><br>接下来演示如何创建一个service:</p>
+<ul>
+<li><p>首先使用1.4小节中的<code>kubia-rs.yaml</code>来创建3个pod：<code>kubectl create -f kubia-rs.yaml</code></p>
+<p>创建成功之后就可以看到3个pod<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607673418280-1df7615c-7200-4101-9f33-5a7268923a6d.png#align=left&display=inline&height=160&margin=%5Bobject%20Object%5D&name=rs.png&originHeight=160&originWidth=1268&size=39467&status=done&style=none&width=1268" srcset="/img/loading.gif" alt="rs.png"></p>
+</li>
+<li><p>接下来新建service来提供对这3个pod的访问，新建<code>kubia-svc.yaml</code></p>
+<pre><code class="yaml">apiVersion: v1
+kind: Service
+metadata:
+name: kubia
+spec:
+ports:
+- name: port80 # 为所有端口指定名称
+  port: 80 # 对外开放的服务端口
+  targetPort: 8080 # 后方 pod 的服务端口
+selector:
+  app: kubia</code></pre>
+<p>执行<code>kubectl create -f kubia-svc.yaml</code>来创建该服务，之后就可以看到它的信息：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607673617273-2a231480-7e30-49c8-bda5-94b31baeb8b4.png#align=left&display=inline&height=141&margin=%5Bobject%20Object%5D&name=image.png&originHeight=141&originWidth=1360&size=44737&status=done&style=none&width=1360" srcset="/img/loading.gif" alt="image.png"><br>CLUSTER-IP一栏就是该服务的ip，节点内其他pod就可以通过这个ip来访问服务，例如通过pod<code>kubia-4p45t</code>来访问服务：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607673956066-7132bfd9-1b31-4e11-8399-fb9f45bb3330.png#align=left&display=inline&height=136&margin=%5Bobject%20Object%5D&name=service3.png&originHeight=136&originWidth=1058&size=32024&status=done&style=none&width=1058" srcset="/img/loading.gif" alt="service3.png"><br>可以看到请求被转向了<code>kubia-k66bq</code>和<code>kubia-5dlks</code>这2个pod，并且实现了负载均衡</p>
+</li>
+</ul>
+<h3 id="1-7-Endpoints"><a href="#1-7-Endpoints" class="headerlink" title="1.7 Endpoints"></a>1.7 Endpoints</h3><p>因为<code>svc</code>是通过我们事先定义好的标签选择器来查找 pod 的，所以 pod 的 ip 地址变动对于<code>svc</code>毫无影响，其实在<code>svc</code>和<code>pod</code>之间还包含了一个资源叫做<code>endpoint</code>，<code>endpoint</code>(简称<code>ep</code>)是一组地址及其端口的合集，如下图，只要一个<code>svc</code>有标签选择器的话，他就会自动创建一个同名的<code>ep</code>来标记出自己的要管理的 pod</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607671225632-e4497afa-1552-49cc-99d0-03fc94e1ea0e.png#align=left&display=inline&height=513&margin=%5Bobject%20Object%5D&name=endpoint.png&originHeight=513&originWidth=408&size=23720&status=done&style=stroke&width=408" srcset="/img/loading.gif" alt="endpoint.png"></p>
+<ul>
+<li>通过域名访问服务</li>
+</ul>
+<p>在1.6小节中我们通过ip的方式访问了服务，实际上k8s也提供了<code>FQDN</code>（全限定域名）的方式访问服务：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607674417105-d629ed47-b1ff-4666-83bf-537d92ace1b3.png#align=left&display=inline&height=68&margin=%5Bobject%20Object%5D&name=name.png&originHeight=68&originWidth=1142&size=16547&status=done&style=none&width=1142" srcset="/img/loading.gif" alt="name.png"><br>上图中的kubia就是我们在创建<code>service</code>时指定的<code>name</code> 属性<br>(这种方式可以访问同一命名空间中的服务，k8s还支持访问不同命名空间中的服务)</p>
+<ul>
+<li>访问集群外部服务</li>
+</ul>
+<p>如果一个集群内部的pod要访问外部服务器，如云数据库、公共API等，就可以利用<code>Endpoint</code>来指定外部 服务的ip和端口，并将其绑定到一个服务<code>serivce</code>上<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607674767028-ba0918b6-aca8-4fae-9fba-e4105948242b.png#align=left&display=inline&height=503&margin=%5Bobject%20Object%5D&name=13523736-e4c4aa978679fee1.png&originHeight=503&originWidth=177&size=15742&status=done&style=stroke&width=177" srcset="/img/loading.gif" alt="13523736-e4c4aa978679fee1.png"><br>新建<code>external-service.yaml</code>如下，它只是提供了一个80端口供其他pod访问：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: external-service
+spec:
+  ports:
+  - port: 80</code></pre>
+<p>然后新建<code>external-endpoints.yaml</code>如下：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Endpoints
+metadata:
+  # 和 svc 相同的名称
+  name: external-service
+subsets:
+  - addresses:
+    # 这里指定了外部服务的 ip
+    - ip: 13.125.137.129
+    # 可以指定多个
+    # - ip: 22.22.22.22
+    # 还要指定端口号
+    ports:
+    - port: 8000</code></pre>
+<p>执行创建命令： <code>kubectl create -f external-service.yaml</code><br><code>kubectl create -f external-endpoints.yaml</code><br>然后查看服务详情，可以看到他已经和endpoint完成绑定<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607675210199-c22fbed8-b99c-4337-94b5-decd1ee35364.png#align=left&display=inline&height=497&margin=%5Bobject%20Object%5D&name=endpoint2.png&originHeight=497&originWidth=1381&size=90330&status=done&style=none&width=1381" srcset="/img/loading.gif" alt="endpoint2.png"></p>
+<p>另外，也可以指定svc的类型type为<code>ExternalName</code>,再通过<code>ExternalName</code>字段来指定外部服务的域名，如下：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: external-service
+spec:
+  # 要先指定 svc 的类型
+  type: ExternalName
+  # 再在这里指定外部服务的完全限定域名
+  externalName: someapi.some.company.com
+  ports:
+  - port: 80</code></pre>
+<h2 id="2-常用命令"><a href="#2-常用命令" class="headerlink" title="2.常用命令"></a>2.常用命令</h2><table>
+<thead>
+<tr>
+<th align="center"><code>get</code></th>
+<th align="center">查</th>
+<th align="center">列出某个类型的下属资源</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>describe</code></th>
+<th align="center">查</th>
+<th align="center">查看某个资源的详细信息</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>logs</code></th>
+<th align="center">查</th>
+<th align="center">查看某个 pod 的日志</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>create</code></th>
+<th align="center">增</th>
+<th align="center">新建资源</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>explain</code></th>
+<th align="center">查</th>
+<th align="center">查看某个资源的配置项</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>delete</code></th>
+<th align="center">删</th>
+<th align="center">删除某个资源</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>edit</code></th>
+<th align="center">改</th>
+<th align="center">修改某个资源的配置项</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center"><code>apply</code></th>
+<th align="center">改</th>
+<th align="center">应用某个资源的配置项</th>
+</tr>
+</thead>
+</table>
+<h2 id="3-对外提供服务"><a href="#3-对外提供服务" class="headerlink" title="3.对外提供服务"></a>3.对外提供服务</h2><p>k8s对外提供服务通常有<code>post-forward</code> 、<code>NodePort</code> 、<code>Ingress</code>几种方式</p>
+<h3 id="3-1-port-forward"><a href="#3-1-port-forward" class="headerlink" title="3.1 port-forward"></a>3.1 port-forward</h3><p>port-forward适用于测试某个资源是否可用<br><code>kubectl port-forward &lt;资源类型&gt;/&lt;资源名&gt; &lt;本机端口&gt;:&lt;资源端口&gt;</code><br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607675899436-0495205f-ceb4-4497-931a-ffdc034bc6a0.png#align=left&display=inline&height=367&margin=%5Bobject%20Object%5D&name=port-forward1.png&originHeight=367&originWidth=1193&size=81825&status=done&style=none&width=1193" srcset="/img/loading.gif" alt="port-forward1.png"><br>访问：<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607675911713-f948514d-cc07-4469-863e-ffe09ec45833.png#align=left&display=inline&height=58&margin=%5Bobject%20Object%5D&name=port-forward2.png&originHeight=58&originWidth=790&size=13271&status=done&style=none&width=790" srcset="/img/loading.gif" alt="port-forward2.png"></p>
+<h3 id="3-2-NodePort"><a href="#3-2-NodePort" class="headerlink" title="3.2 NodePort"></a>3.2 NodePort</h3><p>NodePort可以将服务转发到所有k8s节点的指定端口上，其本质上也是一个<code>Service</code> 资源，通过指定<code>nodePort</code>来将服务映射到节点的端口上，配置如下：</p>
+<pre><code class="yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: kubia-nodeport
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30123
+  selector:
+    app: kubia</code></pre>
+<p>创建后，就可以通过<code>curl 节点ip:端口号</code> 来访问了，节点ip可以通过<code>kubectl describe node &lt;节点名&gt;</code>来查看</p>
+<h3 id="3-3-Ingress"><a href="#3-3-Ingress" class="headerlink" title="3.3 Ingress"></a>3.3 Ingress</h3><p>使用NodePort已经可以满足暴露服务的需求，但是如果有多个服务，虽然可以通过nginx服务器来实现转发，但是如果服务有变更，就需要再次手动配置nginx，而k8s提供了另一种方式：Ingress</p>
+<p>Ingress由2部分构成，服务转发服务的<code>ingress-controller</code>和<code>Ingress</code>资源，Ingress-controller根据Ingress资源提供的配置来转发流量， k8s本身没有自带Ingress-controller，这里我们使用官方推荐的<code>nginx-ingress-controller</code><br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607676497846-8e24895e-6dd8-4337-b79c-15685f658724.png#align=left&display=inline&height=605&margin=%5Bobject%20Object%5D&name=ingress1.png&originHeight=605&originWidth=515&size=29492&status=done&style=stroke&width=515" srcset="/img/loading.gif" alt="ingress1.png"></p>
+<ul>
+<li>安装nginx-ingress-controller</li>
+</ul>
+<p>官方配置文件： <a href="https://github.com/kubernetes/ingress-nginx/blob/nginx-0.30.0/deploy/static/mandatory.yaml" target="_blank" rel="noopener">https://github.com/kubernetes/ingress-nginx/blob/nginx-0.30.0/deploy/static/mandatory.yaml</a><br>注意，官方的配置文件中，指定的<code>image</code>镜像源无法用国内网络访问，需要替换为国内镜像源。另外，<strong><code>Ingress-controller</code>本身只是一个pod,它并不直接对外暴露端口</strong>，因此还需要新建一个NodePort将其暴露出去，完整配置文件如下：<br><a href="/ingress-nginx-controller.yml">ingress-nginx.yaml</a></p>
+<p>使用<code>kubectl create -f ingress-nginx.yaml</code>之后，就可以查看创建成功的Controller<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607677258423-54901efa-ebb0-4140-a13f-e80586a03b28.png#align=left&display=inline&height=84&margin=%5Bobject%20Object%5D&name=controller1.png&originHeight=84&originWidth=1069&size=23181&status=done&style=none&width=1069" srcset="/img/loading.gif" alt="controller1.png"></p>
+<ul>
+<li>创建ingress资源</li>
+</ul>
+<p>（注意，在这一步之前需要创建一个<code>service</code>及其<code>pod</code>，具体可参考1.6小节中的步骤）<br>新建<code>kubia-ingress.yaml</code>如下：</p>
+<pre><code class="yaml">apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubia
+spec:
+  rules:
+    # 将服务映射到该域名
+  - host: kubia.example.com
+    http:
+      paths:
+        # 通过 /kubia 路径就可以访问该服务
+      - path: /kubia
+        # 该服务后端 svc 的名称及端口号
+        backend:
+          serviceName: kubia
+          servicePort: 80</code></pre>
+<ul>
+<li>配置域名映射</li>
+</ul>
+<p>在<code>ingress-nginx.yaml</code>中，我们已经将<code>nginx-ingress-controller</code>这个pod以30010端口暴露到主机上，接下来需要配置域名映射<br><code>sudo vim /etc/hosts</code><br>加入<code>172.17.0.3(节点ip) kubia.example.com</code></p>
+<p>接下来就可以在主机上通过<code>curl http://kubia.example.com:30010/kubia</code> 来访问服务了<br><img src="https://cdn.nlark.com/yuque/0/2020/png/480333/1607678407869-d644cd7a-dafb-4f40-a51d-52d2b15059b6.png#align=left&display=inline&height=212&margin=%5Bobject%20Object%5D&name=kubia.png&originHeight=212&originWidth=976&size=59226&status=done&style=none&width=976" srcset="/img/loading.gif" alt="kubia.png"></p>
+<h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4.参考"></a>4.参考</h2><p><a href="https://www.jianshu.com/p/8d60ce1587e1" target="_blank" rel="noopener">https://www.jianshu.com/p/8d60ce1587e1</a><br><a href="https://www.jianshu.com/p/116ce601a60f" target="_blank" rel="noopener">https://www.jianshu.com/p/116ce601a60f</a></p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/kubernetes">kubernetes</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/Docker">Docker</a>
+                
+                  <a class="hover-with-bg" href="/tags/kubernetes">kubernetes</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" target="_blank" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+<!--
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+-->
+
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Kubernetes基础&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 80,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
