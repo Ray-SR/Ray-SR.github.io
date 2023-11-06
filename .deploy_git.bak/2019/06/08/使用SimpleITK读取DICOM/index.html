@@ -205,7 +205,7 @@ path = &quot;/dicom_study_dir&quot;
 
 reader = sitk.ImageSeriesReader()
 seriesIDs = reader.GetGDCMSeriesIDs(path)
-dicom_names = reader.GetGDCMSeriesFileNames(path, seriesID[0])
+dicom_names = reader.GetGDCMSeriesFileNames(path, seriesIDs[0])
 reader.SetFileNames(dicom_names)
 image = reader.Execute()
 </code></pre>
