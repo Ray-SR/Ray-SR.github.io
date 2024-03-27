@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>Asyncio基本用法 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Wednesday, December 13th 2023, 7:21 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.2k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      5 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <meta name="referrer" content="no-referrer" />
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p><a name="RIY15"></a></p>
+<h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><ul>
+<li><p>Asyncio是Python3.4加入的异步编程模块，用来取代yield，实现协程。asyncio 模块在单线程上启动一个事件循环（event loop），时刻监听新进入循环的事件，加以处理，并不断重复这个过程，直到异步任务结束</p>
+</li>
+<li><p>官方文档：<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3.7/library/asyncio-task.html#">https://docs.python.org/zh-cn/3.7/library/asyncio-task.html#</a></p>
+</li>
+<li><p>基本概念</p>
+</li>
+</ul>
+<p><code>event_loop</code> 事件循环：程序开启一个无限的循环，程序员会把一些函数注册到事件循环上。当满足事件发生的时候，调用相应的协程函数</p>
+<p><code>coroutine</code> 协程：协程对象，指一个使用async关键字定义的函数，它的调用不会立即执行函数，而是会返回一个协程对象。协程对象需要注册到事件循环，由事件循环调用</p>
+<p><code>task</code> 任务：一个协程对象就是一个原生可以挂起的函数，任务则是对协程进一步封装，其中包含任务的各种状态</p>
+<p><code>future</code>： 代表将来执行或没有执行的任务的结果。它和task上没有本质的区别</p>
+<p><code>async/await</code> 关键字：python3.5 用于定义协程的关键字，async定义一个协程，await用于挂起阻塞的异步调用接口</p>
+<p><a name="XtfG0"></a></p>
+<h2 id="2-使用示例"><a href="#2-使用示例" class="headerlink" title="2.使用示例"></a>2.使用示例</h2><ul>
+<li>简单示例：</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">count</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;One&quot;</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Two&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">await</span> asyncio.gather(count(), count(), count())</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></table></figure>
+
+
+<p>注意，直接执行main()函数并不会运行代码，需要使用asyncio.run()将main函数注册到事件循环并等待运行结束</p>
+<ul>
+<li>并发执行协程函数</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">p</span>):</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;p&#125;</span> complete&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> p+<span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    create_task在python3.7加入，python3.7之前可用asyncio.ensure_future()函数;</span></span><br><span class="line"><span class="string">    asyncio.create_task只能在协程函数中调用，因为这个函数中需要用到事件循环(event_loop);</span></span><br><span class="line"><span class="string">    如果使用的是 asyncio.gather创建协程对象，那么await的返回值就是协程运行的结果;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># tasks = [asyncio.create_task(test(i)) for i in range(10)]</span></span><br><span class="line">    <span class="comment"># result = await asyncio.gather(*tasks)</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    gather接收的参数可以是task或者协程对象，而wait不可以直接接收协程对象</span></span><br><span class="line"><span class="string">    gather返回值的顺序是按照原始顺序排列</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    result = <span class="keyword">await</span> asyncio.gather(*[test(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)])</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    如果使用的是 asyncio.wait，那么返回值是(已完成任务，等待中任务)的集合</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># tasks = [asyncio.create_task(test(i)) for i in range(10)]</span></span><br><span class="line">    <span class="comment"># done, pending = await asyncio.wait(tasks)</span></span><br><span class="line">    <span class="comment"># for task in done:</span></span><br><span class="line">    <span class="comment">#     print(task.result())</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main2</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    通过event_loop执行协程函数</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    tasks = asyncio.gather(*[test(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)])</span><br><span class="line">    result = loop.run_until_complete(tasks)</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main3</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    - asyncio.gather和asyncio.wait区别</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    gather只会返回协程结果，而wait会返回封装的task， wait支持自定义返回的时机，通过接受参数return_when，可选值有ALL_COMPLETED/FIRST_COMPLETED/FIRST_EXCEPTION。因此，如果需要取消task、添加回调函数、自定义返回时机，那么就可以使用wait</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    - asyncio.create_task、loop.create_task、asyncio.ensure_future区别</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    asyncio.create_task源码是调用的loop.create_task</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    loop.create_task接收的参数只能是协程，而ensure_future则可以接收三种参数：</span></span><br><span class="line"><span class="string">    1.接收协程，调用loop.create_task，返回task对象</span></span><br><span class="line"><span class="string">    2.接收Future对象，直接返回</span></span><br><span class="line"><span class="string">    3.接收一个awaitable对象，会await这个对象的__await__方法，再执行一次ensure_future，最后返回Task或者Future</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    tasks = [asyncio.ensure_future(test(i)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line">    done, pending = loop.run_until_complete(asyncio.wait(tasks))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> task <span class="keyword">in</span> done:</span><br><span class="line">        <span class="built_in">print</span>(task.result())</span><br><span class="line"></span><br><span class="line">    <span class="comment"># for task in tasks:</span></span><br><span class="line">    <span class="comment">#     print(task.result())</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    asyncio.run(main())</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用<code>run_in_executor</code> 开启多线程执行阻塞任务</li>
+</ul>
+<p>由于很多第三方库还未直接支持await的写法，因此碰到一些I/O阻塞的任务（比如request, selenium等），还是需要通过多线程并发执行<br />官方文档：<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/asyncio-eventloop.html#asyncio.loop.run_in_executor">https://docs.python.org/zh-cn/3/library/asyncio-eventloop.html#asyncio.loop.run_in_executor</a></p>
+<p><code>loop.run_in_executor(executor, func, *args)</code> 接收三个参数：<br /><code>executor</code>: 必须是一个<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.Executor">concurrent.futures.Executor</a>，如果未指定则使用默认executor<br /><code>func</code> 要执行的函数<br /><code>*args</code> 要传递给函数func的参数<br />使用示例如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep, strftime</span><br><span class="line"><span class="keyword">from</span> concurrent <span class="keyword">import</span> futures</span><br><span class="line"></span><br><span class="line">executor = futures.ThreadPoolExecutor(max_workers=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">blocked_sleep</span>(<span class="params">name, t</span>):</span><br><span class="line">    <span class="built_in">print</span>(strftime(<span class="string">&#x27;[%H:%M:%S]&#x27;</span>),end=<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;sleep &#123;&#125; is running &#123;&#125;s&#x27;</span>.<span class="built_in">format</span>(name, t))</span><br><span class="line">    loop = asyncio.get_event_loop()</span><br><span class="line">    <span class="keyword">await</span> loop.run_in_executor(<span class="literal">None</span>, sleep, <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(strftime(<span class="string">&#x27;[%H:%M:%S]&#x27;</span>),end=<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;sleep &#123;&#125; is end&#x27;</span>.<span class="built_in">format</span>(name))</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    future = (blocked_sleep(i, i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">6</span>))</span><br><span class="line">    fs = asyncio.gather(*future)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> fs</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用asyncio实现异步爬虫的示例</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/Ray-SR/fund_query">https://github.com/Ray-SR/fund_query</a></p>
+<p><a name="aYcCA"></a></p>
+<h2 id="3-参考文章"><a href="#3-参考文章" class="headerlink" title="3.参考文章"></a>3.参考文章</h2><p>《Python黑魔法 — 异步IO（ asyncio） 协程》<br /><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b5e347b3a17c">https://www.jianshu.com/p/b5e347b3a17c</a></p>
+<p>《asyncio中使用阻塞函数》<br /><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903576825774093">https://juejin.cn/post/6844903576825774093</a></p>
+<p>《深入理解asyncio》<br /><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/73568282">https://zhuanlan.zhihu.com/p/73568282</a></p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/Python">Python</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+<!--
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+-->
+
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Asyncio基本用法&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 80,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

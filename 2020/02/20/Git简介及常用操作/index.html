@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>Git简介及常用操作 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Thursday, February 20th 2020, 1:38 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    1.5k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      5 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <meta name="referrer" content="no-referrer" />
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <p>Git是一个开源的分布式版本控制系统，可以有效、高速地处理从很小到非常大的项目版本管理，本文介绍了Ｇｉｔ的一些基本概念及常用操作。</p>
+<span id="more"></span>
+
+<h2 id="1-Git基本概念"><a href="#1-Git基本概念" class="headerlink" title="1.Git基本概念"></a>1.Git基本概念</h2><p>Git是一个分布式版本控制系统，可以有效、高速地处理从很小到非常大的项目版本管理。</p>
+<ul>
+<li>工作区 (Workspace)</li>
+</ul>
+<p>即我们进行代码/文件的增、删、改等操作的本机目录</p>
+<ul>
+<li>暂存区 (Index/Stage)</li>
+</ul>
+<p>用来暂存被改动文件的空间。在本地修改代码后，可以通过<code>git add</code>命令将变动保存到暂存区<br>暂存区的作用：<code>commit</code>操作是原子性的，我们可以挑选自己想记录提交的内容形成一次<code>commit</code><br>     方便撤销修改<code>git checkout</code><br>     对比工作区和暂存区的文件差异<code>git diff</code></p>
+<ul>
+<li>本地仓库 (Repository)</li>
+</ul>
+<p>即项目目录下的<code>.git</code>文件夹，保存了所有和该项目有关的历史记录，<code>commit</code>的结果被保存在本地仓库中<br><code>git init</code>命令可以初始化一个git本地仓库</p>
+<ul>
+<li>远程仓库 (Remote)</li>
+</ul>
+<p>用于项目协作的远程仓库，存放在远程主机上</p>
+<p><img src="/img/Git/1.jpg" srcset="/img/loading.gif" alt="1.jpg"></p>
+<h2 id="2-常用操作"><a href="#2-常用操作" class="headerlink" title="2.常用操作"></a>2.常用操作</h2><ul>
+<li><strong>git init</strong></li>
+</ul>
+<p>初始化一个git本地仓库，即生成<code>.git</code>文件夹</p>
+<ul>
+<li><strong>git clone</strong></li>
+</ul>
+<p>从远程主机克隆版本库到本地，一般使用HTTP(s)协议，还支持SSH、Git、ftp等协议。<br>克隆时，所使用的远程主机自动被命名为<code>origin</code>,可以通过<code>-o</code>参数自定义命名，例如<code>git clone -o jQuery https://github.com/jquery/jquery.git</code></p>
+<ul>
+<li><strong>git add</strong></li>
+</ul>
+<p>在工作区修改完文件，可以通过<code>git add .</code>将所有改动提交到暂存区，也可以指定个别文件，如<code>git add a.txt</code></p>
+<ul>
+<li><strong>git commit</strong></li>
+</ul>
+<p>暂存区的文件需要经过<code>git commit -m &#39;commit info&#39;</code>才会提交到本地仓库中，<code>commit</code>会生成一条版本记录</p>
+<ul>
+<li><strong>git push</strong></li>
+</ul>
+<p>推送代码到远程仓库，例如<code>git push 远程主机名 本地分支名:远程分支名</code><br>如果当前分支与远程分支存在追踪关系，则可以写成<code>git push origin</code><br>如果当前分支只有一个追踪分支（只关联了一个远程主机），则可直接写<code>git push</code><br>如果当前分支与多个远程主机存在追踪关系，则可使用<code>-u</code>参数指定默认主机，如<code>git push -u origin master</code>,之后<code>git push</code>便会默认推送到<code>origin</code>主机</p>
+<p>注意，<code>git push</code>有<code>matching</code>模式和<code>simple</code>模式，matching模式会推送所有有对应的远程分支的本地分支，而simple模式只会推送当前分支。Git2.0版本前，默认采用<code>matching</code>模式，之后默认<code>simple</code>模式。可以通过<code>git config</code>修改：<code>git config --global push.default simple</code></p>
+<ul>
+<li><strong>git pull</strong></li>
+</ul>
+<p>拉取远程主机的某个分支，并与本地分支合并，例如<code>git pull 远程主机名 远程分支名:本地分支名</code><br>如果需要拉取的远程分支是与当前分支合并，则可以写成<code>git pull origin master</code>,这一步相当于先执行<code>git fetch origin</code>,再执行<code>git merge origin/master</code></p>
+<ul>
+<li><strong>git status</strong></li>
+</ul>
+<p>查看文件状态</p>
+<ul>
+<li><strong>git log</strong></li>
+</ul>
+<p>查看<code>commit</code>历史</p>
+<ul>
+<li><strong>git branch</strong></li>
+</ul>
+<p><code>git branch -a</code>查看本地与远程主机的所有分支<br><code>git branch branch_name</code> 新建一个名为branch_name的分支，但仍然停留在当前分支<br><code>git checkout -b branch_name</code> 新建一个名为branch_name的分支，并切换到该分支<br><code>git branch --set-upstream local_branch remote_branch</code> 将本地分支local_branch与远程分支remote_branch建立追踪关系<br><code>git branch -d branch_name</code> 删除本地分支<br><code>git push origin --delete remote_branch</code> 删除远程分支</p>
+<ul>
+<li><strong>git checkout</strong></li>
+</ul>
+<p>拉取远程主机的分支后，可以在它的基础上新建分支，如<code>git checkout -b new_branch</code><br>使用<code>git checout branch_name</code>可以在本地将工作区切换到另一个分支<br>也可用于切换到某次commit : <code>git checkout commit_id</code></p>
+<ul>
+<li><strong>git remote</strong></li>
+</ul>
+<p>为了便于管理，每个远程主机都必须指定一个主机名，<code>git remote -v</code>可以列出所有远程主机名及其地址<br><code>git remote add 主机名 项目地址</code> 用于添加远程主机<br><code>git remote rm 主机名</code> 用于删除远程主机<br><code>git remote rename 原主机名 新主机名</code> 可以重命名远程主机</p>
+<ul>
+<li><strong>git reset</strong></li>
+</ul>
+<p><code>git reset</code>可以重置当前分支到指定<code>commit</code>,有3种模式：<code>mixed</code>、<code>soft</code>、<code>hard</code><br><code>git reset --mixed commit_id</code>：重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变<br><code>git reset --soft commit_id</code>：重置当前分支的指针为指定commit，但保持暂存区和工作区不变<br><code>git reset --hard commit_id</code>：重置当前分支的指针为指定commit，同时重置暂存区和工作区，与指定commit一致(这种方式会丢失本地文件的修改)</p>
+<p><img src="/img/Git/2.png" srcset="/img/loading.gif" alt="2.png"></p>
+<ul>
+<li><strong>git tag</strong></li>
+</ul>
+<p>在一个版本完成之后，可以利用git tag打上标签,方便管理与回溯，其作用与commit_id(commit-sha1)类似.<br><code>git tag</code> 查看所有标签<br><code>git tag -a tag_name -m &quot;tag description&quot;</code> 给当前分支打上名称为tag_name的标签，描述为”tag description”<br><code>git push origin tag_name</code> 推送指定tag到远程<br><code>git push origin --tags</code> 推送所有tag到远程<br><code>git tag -d tag_name</code> 删除指定tag</p>
+<h2 id="3-其他"><a href="#3-其他" class="headerlink" title="3.其他"></a>3.其他</h2><ul>
+<li><strong>gitignore</strong></li>
+</ul>
+<p>有时项目中有些文件不需要放入远程仓库，可以创建一个<code>.gitignore</code>文件来配置推送时需要忽略的文件，例如：<br>*.py[cod]   忽略所有以.pyc、.pyo、.pyd结尾的文件<br>.idea/        忽略.idea文件夹</p>
+<ul>
+<li><strong>配置公钥</strong></li>
+</ul>
+<p>如果不想每次推送代码都要使用用户名、密码进行认证，可以通过ssh公钥的方式认证，以下是Gitlab配置公钥的示例<br>– 生成公钥<br><code>ssh-keygen -t rsa -C &quot;YOUR EMAIL&quot;</code><br>– 查看公钥并复制<br><code>cat ~/.ssh/id_rsa.pub</code><br>– 将公钥添加到Gitlab<br>Settings &gt;&gt; SSH Keys</p>
+<p><img src="/img/Git/3.png" srcset="/img/loading.gif" alt="3.png"></p>
+<h2 id="4-参考链接"><a href="#4-参考链接" class="headerlink" title="4.参考链接"></a>4.参考链接</h2><p>Git原理入门： <a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2018/10/git-internals.html">http://www.ruanyifeng.com/blog/2018/10/git-internals.html</a><br>Git常用命令清单：<a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html">https://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html</a><br>Git reset三种模式：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c2ec5f06cf1a">https://www.jianshu.com/p/c2ec5f06cf1a</a></p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Git">Git</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/Git">Git</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+<!--
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+-->
+
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Git简介及常用操作&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 80,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

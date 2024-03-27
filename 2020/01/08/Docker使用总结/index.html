@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="description" content="">
+  <meta name="author" content="Ray">
+  <meta name="keywords" content="">
+  <title>Docker使用总结 ~ Ray&#39;s Blog</title>
+
+  <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"  >
+<link rel="stylesheet" href="/lib/bootstrap/css/bootstrap.min.css"  >
+<link rel="stylesheet" href="/lib/mdbootstrap/css/mdb.min.css"  >
+<link rel="stylesheet" href="/lib/github-markdown/github-markdown.min.css"  >
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1067060_qzomjdt8bmp.css">
+
+
+
+  <link rel="stylesheet" href="/lib/prettify/tomorrow-night-eighties.min.css"  >
+
+<link rel="stylesheet" href="/css/main.css"  >
+
+
+  <link rel="stylesheet" href="/lib/fancybox/jquery.fancybox.min.css"  >
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Ray's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/">主页</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/archives/">归档</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/categories/">分类</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/tags/">标签</a>
+          </li>
+        
+          
+          
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/about/">关于</a>
+          </li>
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background"
+         style="background: url('/img/post_banner.jpg')no-repeat center center;
+           background-size: cover;
+           background-attachment: fixed;">
+      <div class="full-bg-img">
+        <div class="mask rgba-black-light flex-center">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <br>
+              
+                <p class="mt-3">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>&nbsp;
+                  Wednesday, January 8th 2020, 8:54 pm
+                </p>
+              
+
+              <p>
+                
+                  
+                  &nbsp;<i class="far fa-chart-bar"></i>
+                  <span class="post-count">
+                    2.3k 字
+                  </span>&nbsp;
+                
+
+                
+                  
+                  &nbsp;<i class="far fa-clock"></i>
+                  <span class="post-count">
+                      8 分钟
+                  </span>&nbsp;
+                
+
+                
+                  <!-- 不蒜子统计文章PV -->
+                  
+                  &nbsp;<i class="far fa-eye" aria-hidden="true"></i>&nbsp;
+                  <span id="busuanzi_container_page_pv">
+                    <span id="busuanzi_value_page_pv"></span> 次
+                  </span>&nbsp;
+                
+              </p>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <meta name="referrer" content="no-referrer" />
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="py-5 z-depth-3" id="board">
+        <div class="post-content mx-auto" id="post">
+          <div class="markdown-body">
+            <h1 id="Docker使用总结"><a href="#Docker使用总结" class="headerlink" title="Docker使用总结"></a>Docker使用总结</h1><p>Docker是一个开源容器引擎，它可以将我们的开发环境、代码、配置文件等打包到一个容器中，并发布到任意平台。Docker实现的是操作系统级别的虚拟化，区别于传统的虚拟机，它占用资源少，灵活方便，非常适合web应用的自动化打包和发布以及自动化测试和持续集成、发布。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li><strong>镜像 image</strong></li>
+</ul>
+<p>Docker中镜像的概念类似于虚拟机的镜像，它是一个包含有文件系统的面向Docker引擎的只读模板，简单的理解它就是构建一个容器的基础。我们可以基于镜像去创建一个容器，也可以将容器打包成镜像。Docker的官方镜像仓库(Docker hub)中提供了许多软件的镜像，例如我们执行<code>docker search python</code>就可以看到各种python镜像。<br><img src="/img/Docker/1.png" srcset="/img/loading.gif" alt="1.png"><br>实际应用中，我们通常会将自己的开发环境、代码、配置等打包成一个镜像，然后将它发布到生产环境中，这样，就不必为环境是否兼容而担心，因为代码运行所需的一切资源都已经包含的镜像当中了，我们只需要基于它创建容器并启动运行即可。</p>
+<p>要下载某个镜像，可以直接从Docker官方镜像仓库中拉取，例如执行<code>docker pull python</code>就可以直接拉取一个官方python镜像，再执行<code>docker images</code>就可以看到电脑中所有镜像了。以后对镜像指定的操作，可以基于镜像的名字，或者镜像ID（IMAGE ID）。<br><img src="/img/Docker/2.png" srcset="/img/loading.gif" alt="2.png"></p>
+<ul>
+<li><strong>容器 container</strong></li>
+</ul>
+<p>有了镜像我们就可以创建一个容器，容器类似于一个轻量级的沙盒，Docker利用容器来运行、隔离不同的应用，它是镜像创建的应用实例，各个容器之间互不影响。需要注意，镜像本身是只读的，我们基于一个镜像启动了容器，Docker只是在镜像的上层创建了一个可写层，镜像本身不变。执行<code>docker ps -a</code>或者<code>docker container ls -a</code>就可以看到所有正在运行或不在运行的容器：<br><img src="/img/Docker/3.png" srcset="/img/loading.gif" alt="3.png"></p>
+<p>我们可以将一个web应用所有环境都放在同一个容器中，但为了解耦，也可以将不同的应用隔离开来，放在不同容器当中。同样的，每个容器都有自己的名字和ID，如上图所示，<code>IMAGE</code>一栏表示当前容器是基于哪个镜像创建的；<code>COMMAND</code>代表容器启动时执行的命令，通常是某个服务启动的命令，这样容器启动后服务就可以同时启动；<code>PORTS</code>则展示了从宿主机到容器的ip、端口映射关系，例如我们想给某个<code>nginx</code>应用绑定<code>80</code>端口，就可以将宿主机的80端口映射到nginx容器的80端口，这样，访问<code>http://宿主机ip:80</code>将相当于访问<code>nginx</code>应用了。</p>
+<p>关于容器还有一些其他重要概念,主要是在启动容器时可能会使用的一些配置，通常我们使用<code>docker run -xxx xxx image_name</code>创建容器，常用的一些参数如下：</p>
+<p>–后台运行<br>通常启动容器后不加特别参数会直接进入容器，如果想让它在后台运行，可以加上<code>-d</code>参数</p>
+<p>– 重新启动<br>通过<code>--restart=always</code>的形式指定，增加这项配置可以让容器在出现一些情况时自动重启，保证服务正常运行。restart支持4种参数：<br><code>no</code>:容器退出时不要自动重启（默认值）<br><code>on-failure[:max-retries]</code>:只在容器以非0状态码(正常退出)退出时重启，可以指定尝试重启容器的次数<br><code>always</code>:不管退出状态码是什么始终重启容器，docker daemon将无限次数地重启容器<br><code>unless-stopped</code>:不管退出状态码是什么始终重启容器，但是不考虑在Docker守护进程启动时就已经停止了的容器</p>
+<p>– root权限<br>正常启动容器后，进入容器是以root用户执行操作，但它并不完全具有root权限，可以在创建容器时加上<code>--privileged=true</code>来赋予容器真正root权限</p>
+<p>– 文件挂载<br>文件挂载是Docker一个非常重要的特性，我们可以将代码、配置文件等放在宿主机，然后在创建容器时挂载这些目录到容器中，这样，代码更新或者配置更新时，我们只需要更新宿主机路径下的文件，容器内就自动变更了</p>
+<p>– 指定ip<br>docker容器启动后，宿主机默认ip为<code>172.17.0.1</code>，启动的容器按照时间顺序绑定ip,例如<code>172.17.0.2</code>，如果想给容器绑定一个固定的ip,可以创建一个docker 网络，然后在创建容器时绑定一个固定ip。例如执行<code>docker network create --subnet=192.168.0.0/16 staticnet</code>创建一个名为staticnet的私有网络，网段为<code>192.168.0.0/16</code>,之后在创建容器时，就可以通过<code>--net staticnet --ip 192.168.0.2</code>来指定容器ip（注意，在这个子网段中，192.168.0.1是宿主机ip）。</p>
+<ul>
+<li><strong>仓库 repository</strong></li>
+</ul>
+<p>Docker中的仓库用于存放Docker镜像，注意仓库Repository和注册服务器Registry的区别，注册服务器是存放仓库的地方，而仓库是存放镜像的地方。Docker官方镜像仓库是Docker Hub: <a target="_blank" rel="noopener" href="https://hub.docker.com/">https://hub.docker.com/</a></p>
+<h2 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h2><p>我们可以从Docker Hub中拉取一些需要镜像，然后在这些镜像的基础上，安装配置代码运行所需的环境，从而制作成一个新的镜像，而制作镜像主要有2种方式，以下以制作python镜像为例：</p>
+<ul>
+<li><strong>docker commit的方式</strong></li>
+</ul>
+<p>–在获取了一个基础镜像后，我们可以基于它启动一个容器，如<code>docker run -itd --name python_container python /bin/bash</code>命令创建并启动一个python容器：<br><img src="/img/Docker/6.png" srcset="/img/loading.gif" alt="6.png"></p>
+<p>查看容器<br><img src="/img/Docker/4.png" srcset="/img/loading.gif" alt="4.png"></p>
+<p>–随后执行<code>docker exec -it python_container /bin/bash</code>进入容器，我们可以在容器中安装依赖环境，例如将项目中的<code>requirements.txt</code>放入容器后执行<code>pip install -r requirements.txt</code>，执行完毕，退出容器</p>
+<p>–最后，通过<code>docker commit python_container new_python_image</code>命令将安装好依赖的python容器打包成一个名为<code>new_python_image</code>的镜像，此时通过<code>docker images</code>就可以看到新的镜像了.<br>提交镜像:<br><img src="/img/Docker/5.png" srcset="/img/loading.gif" alt="5.png"></p>
+<p>查看制作好的镜像:<br><img src="/img/Docker/7.png" srcset="/img/loading.gif" alt="7.png"></p>
+<ul>
+<li><strong>Dockerfile的方式</strong></li>
+</ul>
+<p>通过docker commit将一个容器打包成镜像操作简便、容易理解，但是在安装依赖、环境过程中，大量缓存、无关内容被添加，并且由于Docker镜像是分层存储的，修改容器只是在当前层进行标记、添加、修改，并不会实际改变上一层，因此使用docker commit 的方式制作镜像，会导致镜像越来越臃肿，同时也让后续维护的人无法得知镜像构建的具体步骤。因此，最好使用Dockerfile来构建镜像。</p>
+<p>Dockerfile是一个用来构建镜像的文本文件，其中包含了构建镜像所需的指令和说明，详细文档可参考<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/">https://docs.docker.com/engine/reference/builder/</a></p>
+<p>下面是一个简单的Dockerfile示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 基于python3.6.8镜像</span><br><span class="line">FROM python:3.6.8</span><br><span class="line"></span><br><span class="line"># 复制Django项目所需的依赖文件清单到容器中的/目录下</span><br><span class="line">COPY requirements.txt /</span><br><span class="line"></span><br><span class="line"># 安装项目所需的python依赖</span><br><span class="line">RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r /requirements.txt</span><br></pre></td></tr></table></figure>
+<p>注意，Dockerfile最好和容器所需的其他文件一起单独放在一个文件夹中。编写完Dockerfile，就可以在Dockerfile所在路径通过<code>docker build -t image_name .</code>开始制作镜像，等待完成即可</p>
+<h2 id="创建容器"><a href="#创建容器" class="headerlink" title="创建容器"></a>创建容器</h2><p>创建容器最常见的方式是通过<code>docker run</code>命令，详细参数可参考：<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/run/">https://docs.docker.com/engine/reference/commandline/run/</a></p>
+<p>当我们有多个容器需要创建并配置时，可以使用<code>docker-compose</code>工具来编排容器并启动，只需要编写一个yaml文件，再通过一个命令就可以创建并启动所有容器，一个简单示例如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># docker_compose.yaml 配置实例</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span> </span><br><span class="line">    <span class="attr">nginx:</span> </span><br><span class="line">        <span class="comment"># 指定镜像</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 指定容器名称</span></span><br><span class="line">        <span class="attr">container_name:</span> <span class="string">nginx_container</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 端口映射</span></span><br><span class="line">        <span class="attr">ports:</span> </span><br><span class="line">            <span class="bullet">-</span> <span class="number">8080</span><span class="string">:8080</span></span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 文件挂载路径</span></span><br><span class="line">        <span class="attr">volumes:</span> </span><br><span class="line">            <span class="bullet">-</span> <span class="string">/DJANGO_PROJECT:/DJANGO_PROJECT</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">/nginx.conf:/etc/nginx/nginx.conf</span></span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 网络和ip</span></span><br><span class="line">        <span class="attr">networks:</span> </span><br><span class="line">            <span class="attr">extnetwork:</span> </span><br><span class="line">                <span class="attr">ipv4_address:</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.2</span></span><br><span class="line">                </span><br><span class="line">        <span class="comment"># 启动后指定的命令</span></span><br><span class="line">        <span class="attr">command:</span> <span class="string">nginx</span> <span class="string">-g</span> <span class="string">&#x27;daemon off;&#x27;</span></span><br><span class="line">        </span><br><span class="line">        <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">        </span><br><span class="line"><span class="attr">networks:</span> </span><br><span class="line">    <span class="attr">extnetwork:</span> </span><br><span class="line">        <span class="attr">ipam:</span> </span><br><span class="line">            <span class="attr">config:</span> </span><br><span class="line">            <span class="bullet">-</span> <span class="attr">subnet:</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br></pre></td></tr></table></figure>
+<p>（需要注意，编写yaml时不能使用tag缩进，冒号后必须有空格）</p>
+<p>编写完docker_compose.yaml文件，就可以在该文件路径下执行<code>docker-compose up -d .</code>,一键创建、启动容器。</p>
+<h2 id="参考及链接"><a href="#参考及链接" class="headerlink" title="参考及链接"></a>参考及链接</h2><p>参考文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23599229">https://zhuanlan.zhihu.com/p/23599229</a></p>
+<p>Docker入门介绍及常用命令：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwOTQ4MzY1Nw==&mid=2247488151&idx=1&sn=b65d355055746b8720c0a989b704666a&chksm=9b5fb671ac283f6715f7abc4b2f5b8711ef1b332b8a697a3142531c7691774ed7b7d08936807&mpshare=1&scene=1&srcid=&key=e85982dd5b83123872824b0bdfaf85bf9311bd5553fa62110ac5171516755e9ded814f7adcdd789a6754a7ebfbd51fbd4926aad92bb4ffdd5cb2ea24f9651c799a4039658b35b500fcd1aee6a10384a8&ascene=1&uin=NjE4ODY0Mzg0&devicetype=Windows+10&version=62060739&lang=zh_CN&pass_ticket=L9QR67EoPhd2C5D7R1VdlOjgtM6umNlAXPO7aCcqFh8IFpzRjjKzNQc3ITX03%2Fm7">https://mp.weixin.qq.com/s?__biz=MzAwOTQ4MzY1Nw==&amp;mid=2247488151&amp;idx=1&amp;sn=b65d355055746b8720c0a989b704666a&amp;chksm=9b5fb671ac283f6715f7abc4b2f5b8711ef1b332b8a697a3142531c7691774ed7b7d08936807&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;key=e85982dd5b83123872824b0bdfaf85bf9311bd5553fa62110ac5171516755e9ded814f7adcdd789a6754a7ebfbd51fbd4926aad92bb4ffdd5cb2ea24f9651c799a4039658b35b500fcd1aee6a10384a8&amp;ascene=1&amp;uin=NjE4ODY0Mzg0&amp;devicetype=Windows+10&amp;version=62060739&amp;lang=zh_CN&amp;pass_ticket=L9QR67EoPhd2C5D7R1VdlOjgtM6umNlAXPO7aCcqFh8IFpzRjjKzNQc3ITX03%2Fm7</a></p>
+<p>使用Docker部署一套Nginx + uWSGI + Django的范例：<a href="https://ray-sr.github.io/2019/12/10/Docker%E9%83%A8%E7%BD%B2Nginx%20+%20uWSGI%20+%20Django%E5%AE%9E%E8%B7%B5/">https://ray-sr.github.io/2019/12/10/Docker%E9%83%A8%E7%BD%B2Nginx%20+%20uWSGI%20+%20Django%E5%AE%9E%E8%B7%B5/</a></p>
+
+            <hr>
+          </div>
+          <br>
+          <div>
+            <p>
+            
+              <span>
+                <i class="iconfont icon-inbox"></i>
+                
+                  <a class="hover-with-bg" href="/categories/Docker">Docker</a>
+                  &nbsp;
+                
+              </span>&nbsp;&nbsp;
+            
+            
+              <span>
+                <i class="iconfont icon-tag"></i>
+                
+                  <a class="hover-with-bg" href="/tags/Docker">Docker</a>
+                
+              </span>
+            
+            </p>
+            
+              <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://zh.wikipedia.org/wiki/Wikipedia:CC_BY-SA_3.0%E5%8D%8F%E8%AE%AE%E6%96%87%E6%9C%AC" rel="nofollow noopener noopener">CC BY-SA 3.0协议</a> 。转载请注明出处！</p>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-none d-lg-block col-lg-2 toc-container">
+      
+  <div id="toc">
+    <p class="h4"><i class="far fa-list-alt"></i>&nbsp;TOC</p>
+    <div id="tocbot"></div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- custom -->
+
+
+<!-- Comments -->
+<div class="col-lg-7 mx-auto nopadding-md">
+  <div class="container comments mx-auto" id="comments">
+    
+  </div>
+</div>
+
+    
+  </main>
+
+  
+    <a class="z-depth-1" id="scroll-top-button" href="#" role="button">
+      <i class="fa fa-chevron-up scroll-top-arrow" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+<!--
+    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><b>Hexo</b></a>
+    <i class="iconfont icon-love"></i>
+    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"> <b>Fluid</b></a>
+-->
+
+    <br>
+
+    
+  
+    <!-- 不蒜子统计PV -->
+    
+    &nbsp;<span id="busuanzi_container_site_pv">总访问量 
+          <span id="busuanzi_value_site_pv"></span> 次</span>&nbsp;
+  
+  
+    <!-- 不蒜子统计UV -->
+    
+    &nbsp;<span id="busuanzi_container_site_uv">总访客数 
+            <span id="busuanzi_value_site_uv"></span> 人</span>&nbsp;
+  
+  <br>
+
+
+
+    
+
+
+    <!-- cnzz Analytics icon -->
+    
+
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/lib/jquery/jquery.min.js" ></script>
+<script src="/lib/popper/popper.min.js" ></script>
+<script src="/lib/bootstrap/js/bootstrap.min.js" ></script>
+<script src="/lib/mdbootstrap/js/mdb.min.js" ></script>
+<script src="/js/main.js" ></script>
+
+
+  <script src="/js/lazyload.js" ></script>
+
+
+
+  
+    <script src="/lib/tocbot/tocbot.min.js" ></script>
+  
+  <script src="/js/post.js" ></script>
+
+
+
+  <script src="/lib/smooth-scroll/smooth-scroll.min.js" ></script>
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+<!-- Plugins -->
+
+
+  
+
+  
+
+  
+
+  
+
+  <!-- cnzz Analytics -->
+  
+
+
+
+  <script src="/lib/prettify/prettify.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      $('pre').addClass('prettyprint  ');
+      prettyPrint();
+    })
+  </script>
+
+
+
+  <script src="/lib/typed/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Docker使用总结&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 80,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script src="/lib/anchor/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "false",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      getSearchFile(path);
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script src="/lib/fancybox/jquery.fancybox.min.js" ></script>
+  <script>
+    $("#post img:not(.no-zoom img, img[no-zoom])").each(
+      function () {
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "images");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
